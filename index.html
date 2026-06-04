@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>iDream 廚房 — 線上訂購</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Noto+Sans+TC:wght@400;500;600&family=Noto+Serif+TC:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --espresso: #2c1a0e;
+  --mocha: #5c3d2e;
+  --caramel: #c07942;
+  --caramel-light: #f5e6d3;
+  --latte: #e8d5bc;
+  --cream: #faf6f0;
+  --cream2: #f2eade;
+  --parchment: #ede0cc;
+  --text-main: #3d2817;
+  --text-sub: #6b5344;
+  --border-color: #d4c5b9;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Noto Sans TC', sans-serif; background: var(--cream); color: var(--text-main); }
+
+.screen-loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #2c1a0e 0%, #5c3d2e 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.screen-loading.active {
+  display: flex;
+}
+
+.screen-loading:not(.active) {
+  display: none;
+}
+
+.loading-text {
+  color: #faf6f0;
+  font-size: 18px;
+  text-align: center;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(250, 246, 240, 0.3);
+  border-top: 4px solid #faf6f0;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.screen-register, .screen-app {
+  display: none;
+}
+
+.screen-register.active, .screen-app.active {
+  display: block;
+}
+</style>
+</head>
+<body>
+
+<!-- 加載畫面 -->
+<div id="screen-loading" class="screen-loading active">
+  <div style="text-align: center;">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">正在加載購物車...</div>
+  </div>
+</div>
+
+<!-- 註冊畫面 -->
+<div id="screen-register" class="screen-register">
+  <div style="padding: 20px; text-align: center;">
+    <h1>歡迎來到 iDream 廚房</h1>
+    <p>請填寫會員資料以繼續購物</p>
+  </div>
+</div>
+
+<!-- 購物應用 -->
+<div id="screen-app" class="screen-app">
+  <div style="padding: 20px; text-align: center;">
+    <h1>iDream 廚房購物車</h1>
+    <p>購物車應用正在加載...</p>
+  </div>
+</div>
+
+<!-- LINE LIFF SDK - 必須在 body 最後 -->
+<script src="https://liff.line.me/sdk/web/liff.js"></script>
+
+<script>
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 全局變量
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+const LIFF_ID = '2010286983-KluFiWkX';
+let lineUserProfile = null;
+let member = null;
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 初始化 LIFF
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+async function initLIFF() {
+  try {
+    console.log('開始初始化 LIFF...');
+    
+    // 等待 LIFF SDK 完全加載
+    if (typeof liff === 'undefined') {
+      console.error('LIFF SDK 未定義，等待重試...');
+      setTimeout(initLIFF, 1000);
+      return;
+    }
+
+    // 初始化 LIFF
+    await liff.init({ liffId: LIFF_ID });
+    console.log('✅ LIFF 初始化成功');
+
+    // 檢查登入狀態
+    if (!liff.isLoggedIn()) {
+      console.log('用戶未登入，導向 LINE 登入...');
+      liff.login();
+      return;
+    }
+
+    // 取得用戶資料
+    lineUserProfile = await liff.getProfile();
+    console.log('✅ LINE 用戶資料取得成功:', lineUserProfile);
+
+    // 進行應用初始化
+    proceedWithApp();
+
+  } catch (error) {
+    console.error('❌ LIFF 初始化失敗:', error);
+    
+    // 備用方案：使用演示資料
+    console.log('使用備用方案...');
+    setTimeout(() => {
+      proceedWithAppFallback();
+    }, 2000);
+  }
+}
+
+function proceedWithApp() {
+  console.log('進行應用初始化...');
+  const saved = localStorage.getItem('idream_member');
+  
+  if (saved) {
+    member = JSON.parse(saved);
+    launchApp();
+  } else {
+    // 顯示註冊頁面並自動填入 LINE 資料
+    if (lineUserProfile) {
+      showRegisterWithLINE(lineUserProfile);
+    } else {
+      showRegisterFallback();
+    }
+  }
+}
+
+function proceedWithAppFallback() {
+  console.log('使用備用資料進行應用初始化...');
+  const saved = localStorage.getItem('idream_member');
+  
+  if (saved) {
+    member = JSON.parse(saved);
+    launchApp();
+  } else {
+    showRegisterFallback();
+  }
+}
+
+function showRegisterWithLINE(profile) {
+  console.log('顯示註冊頁面（含 LINE 資料）:', profile);
+  document.getElementById('screen-loading').classList.remove('active');
+  document.getElementById('screen-register').classList.add('active');
+  
+  // 簡單的註冊頁面
+  const html = `
+    <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+      <h1>歡迎加入 iDream 廚房</h1>
+      <p>您的 LINE 帳號：${profile.displayName}</p>
+      ${profile.pictureUrl ? `<img src="${profile.pictureUrl}" style="width: 80px; height: 80px; border-radius: 50%; margin: 20px 0;">` : ''}
+      <p style="margin-top: 20px; color: green;">✅ LINE 帳號已連接</p>
+      <button onclick="completeRegistration('${profile.displayName}', '${profile.userId}', '${profile.pictureUrl || ''}')" style="padding: 10px 20px; background: #c07942; color: white; border: none; border-radius: 5px; cursor: pointer; margin-top: 20px;">
+        繼續購物
+      </button>
+    </div>
+  `;
+  document.getElementById('screen-register').innerHTML = html;
+}
+
+function showRegisterFallback() {
+  console.log('顯示備用註冊頁面...');
+  document.getElementById('screen-loading').classList.remove('active');
+  document.getElementById('screen-register').classList.add('active');
+  
+  const html = `
+    <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+      <h1>歡迎加入 iDream 廚房</h1>
+      <p>⚠️ 無法讀取 LINE 資料，使用演示帳號</p>
+      <p style="margin-top: 20px; color: #666; font-size: 14px;">
+        如果您想使用實際的 LINE 帳號，請確保：<br>
+        1. 在 LINE 應用中打開此連結<br>
+        2. 授予應用程式存取您的資料的權限
+      </p>
+      <button onclick="completeRegistration('訪客', 'guest_' + Date.now(), '')" style="padding: 10px 20px; background: #c07942; color: white; border: none; border-radius: 5px; cursor: pointer; margin-top: 20px;">
+        繼續購物（演示版本）
+      </button>
+    </div>
+  `;
+  document.getElementById('screen-register').innerHTML = html;
+}
+
+function completeRegistration(displayName, userId, pictureUrl) {
+  console.log('完成註冊:', displayName, userId);
+  
+  member = {
+    lineId: userId,
+    lineDisplayName: displayName,
+    linePictureUrl: pictureUrl,
+    displayName: displayName,
+    name: displayName,
+    phone: '',
+    email: '',
+    address: '',
+    joinDate: new Date().toISOString(),
+  };
+  
+  localStorage.setItem('idream_member', JSON.stringify(member));
+  launchApp();
+}
+
+function launchApp() {
+  console.log('啟動購物應用');
+  document.getElementById('screen-loading').classList.remove('active');
+  document.getElementById('screen-register').classList.remove('active');
+  document.getElementById('screen-app').classList.add('active');
+  
+  const html = `
+    <div style="padding: 20px; text-align: center;">
+      <h1>iDream 廚房購物車</h1>
+      <p>歡迎, ${member.displayName}!</p>
+      ${member.linePictureUrl ? `<img src="${member.linePictureUrl}" style="width: 80px; height: 80px; border-radius: 50%; margin: 20px 0;">` : ''}
+      <p style="margin-top: 20px; color: green;">✅ LINE 帳號: ${member.lineDisplayName}</p>
+      <p style="margin-top: 20px; padding: 20px; background: #f5e6d3; border-radius: 5px;">
+        購物車應用已準備就緒！<br><br>
+        <strong>您的資訊已成功保存：</strong><br>
+        名稱: ${member.name}<br>
+        LINE ID: ${member.lineId.substring(0, 20)}...
+      </p>
+    </div>
+  `;
+  document.getElementById('screen-app').innerHTML = html;
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 頁面加載時啟動
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('DOM 已加載，開始初始化 LIFF...');
+  initLIFF();
+});
+
+// 如果 LIFF SDK 已經加載，也嘗試初始化
+if (typeof liff !== 'undefined') {
+  console.log('LIFF SDK 已可用，直接初始化...');
+  initLIFF();
+} else {
+  console.log('等待 LIFF SDK 加載...');
+  window.addEventListener('load', function() {
+    console.log('頁面完全加載，嘗試初始化 LIFF...');
+    initLIFF();
+  });
+}
+</script>
+
+</body>
+</html>
