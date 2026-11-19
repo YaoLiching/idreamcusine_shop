@@ -207,6 +207,39 @@ body {
   font-size: 10px; color: var(--caramel); letter-spacing: 0.08em;
   font-family: 'Noto Serif TC', serif; margin-top: 1px;
 }
+.ref-btn {
+  margin-left: auto;
+  background: transparent; border: 1px solid rgba(232,213,188,0.35);
+  color: var(--latte); border-radius: 20px; padding: 7px 11px;
+  font-size: 12px; font-weight: 700; cursor: pointer; font-family: 'Noto Sans TC', sans-serif;
+  white-space: nowrap;
+}
+.ref-btn + .cart-btn { margin-left: 0; }
+.ref-overlay { display: none; position: fixed; inset: 0; background: rgba(28,16,8,0.6); z-index: 450; align-items: flex-end; justify-content: center; }
+.ref-overlay.show { display: flex; }
+.ref-sheet { background: var(--cream); width: 100%; max-width: 480px; max-height: 88vh; overflow-y: auto; border-radius: 20px 20px 0 0; padding: 20px 18px 28px; }
+.ref-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.ref-title { font-family: 'Noto Serif TC', serif; font-size: 18px; font-weight: 700; color: var(--espresso); }
+.ref-close { background: none; border: none; font-size: 22px; color: var(--text-sub); cursor: pointer; padding: 4px 8px; }
+.ref-card { background: var(--white); border-radius: 14px; padding: 16px; margin-bottom: 12px; }
+.ref-note { font-size: 12.5px; color: var(--text-mid); line-height: 1.8; }
+.ref-big { font-size: 28px; font-weight: 700; color: var(--espresso); font-family: 'Playfair Display', serif; }
+.ref-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+.ref-stat { background: var(--cream); border-radius: 10px; padding: 10px; }
+.ref-stat b { display: block; font-size: 17px; color: var(--espresso); }
+.ref-stat span { font-size: 11px; color: var(--text-sub); }
+.ref-row { display: flex; justify-content: space-between; gap: 8px; font-size: 12.5px; padding: 8px 0; border-bottom: 1px dashed var(--border-color); }
+.ref-row:last-child { border-bottom: none; }
+.ref-months { display: flex; gap: 8px; margin: 4px 0 10px; }
+.ref-month { flex: 1; padding: 8px; border-radius: 10px; border: 1.5px solid var(--border-color); background: var(--white); font-size: 12.5px; cursor: pointer; font-family: inherit; }
+.ref-month.on { border-color: var(--caramel); background: var(--caramel-light); font-weight: 700; }
+.ref-msg { font-size: 12.5px; margin-top: 8px; line-height: 1.7; }
+.ref-info-bar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 10px; }
+.ref-info-btn { padding: 9px 4px; border-radius: 10px; border: 1.5px solid var(--border-color); background: var(--white); font-size: 12px; font-weight: 700; color: var(--espresso); cursor: pointer; font-family: inherit; }
+.ref-info-btn.on { border-color: var(--caramel); background: var(--caramel-light); }
+.ref-code-row { display: flex; gap: 8px; }
+.ref-code-row .form-input { flex: 1; text-transform: uppercase; }
+.ref-apply-btn { flex-shrink: 0; background: var(--espresso); color: var(--latte); border: none; border-radius: 10px; padding: 0 16px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; }
 .cart-btn {
   margin-left: auto;
   background: rgba(232,213,188,0.12);
@@ -635,6 +668,7 @@ body {
       <div class="app-header-brand">iDream cuisine</div>
       <div class="app-header-sub">喵老師醜蔬果手作</div>
     </div>
+    <button class="ref-btn" onclick="openReferral()">🤝 推薦人專區</button>
     <button class="cart-btn" onclick="goTab('cart')">
       🛒 <div class="cart-cnt" id="cartCnt">0</div>
     </button>
@@ -656,7 +690,7 @@ body {
 
     <div class="award-box">
       <div class="award-title" style="margin-bottom:2px">🏆 喵老師得獎慶｜永續好食正式上市</div>
-      <div class="award-note" style="margin-top:0">滿 $720 小七免運、滿 $1,200 贈湯，詳見下方「滿額贈區」</div>
+      <div class="award-note" style="margin-top:0">滿 $720 小七免運、滿 $1,200 贈湯，<strong>活動至 12/20 止</strong>，詳見下方「滿額贈區」</div>
     </div>
 
     <div style="background:#fff;border-left:4px solid #c07942;border-radius:0 10px 10px 0;padding:10px 14px;font-size:13px;line-height:1.7;color:var(--espresso);margin-bottom:12px">
@@ -994,7 +1028,7 @@ body {
     </section>
 
     <section class="zone zone-e">
-      <div class="zone-head"><div class="zone-title">🎁 滿額贈區</div><div class="zone-sub" style="font-size:14px;font-weight:700;color:#b5381f">⚠️ 滿額金額不包含運費</div><div class="zone-sub">抖內金額可計入滿額</div></div>
+      <div class="zone-head"><div class="zone-title">🎁 滿額贈區</div><div class="zone-sub" style="font-size:13px;font-weight:700;color:var(--mocha)">活動期間：即日起至 12/20（六）23:59</div><div class="zone-sub" style="font-size:14px;font-weight:700;color:#b5381f">⚠️ 滿額金額不包含運費</div><div class="zone-sub">抖內金額可計入滿額</div></div>
 
       <div class="gift-card">
         <div class="gift-card-label">1. 滿 $720，小七免運費</div>
@@ -1176,6 +1210,14 @@ body {
           <input class="form-input" id="r-store" placeholder="請填寫取件超商門市名稱">
         </div>
         <div class="form-group">
+          <label class="form-label">好友推薦碼（選填）</label>
+          <div class="ref-code-row">
+            <input class="form-input" id="ref-code-input" placeholder="例如 MIKE678" autocomplete="off" oninput="referralInputChanged()">
+            <button type="button" class="ref-apply-btn" onclick="applyReferralCode()">套用</button>
+          </div>
+          <div class="ref-msg" id="ref-code-msg"></div>
+        </div>
+        <div class="form-group">
           <label class="form-label">特殊需求留言</label>
           <input class="form-input" id="r-note" placeholder="過敏食材、特殊需求等（選填）">
         </div>
@@ -1339,6 +1381,22 @@ body {
 </div>
 
 <!-- SUCCESS -->
+<div class="ref-overlay" id="refOverlay" onclick="if(event.target===this)closeReferral()">
+  <div class="ref-sheet">
+    <div class="ref-head">
+      <div class="ref-title">🤝 推薦人專區</div>
+      <button class="ref-close" onclick="closeReferral()" aria-label="關閉">✕</button>
+    </div>
+    <div class="ref-info-bar">
+      <button type="button" class="ref-info-btn" data-k="law" onclick="refInfoToggle('law')">📜 相關法規</button>
+      <button type="button" class="ref-info-btn" data-k="tier" onclick="refInfoToggle('tier')">📊 回饋金級距</button>
+      <button type="button" class="ref-info-btn" data-k="pay" onclick="refInfoToggle('pay')">💰 回饋金發放方式</button>
+    </div>
+    <div id="ref-info-panel" class="ref-card" style="display:none"></div>
+    <div id="ref-body"></div>
+  </div>
+</div>
+
 <div class="success-overlay" id="successOverlay">
   <div class="success-card">
     <div class="success-icon">✉️</div>
@@ -1709,6 +1767,10 @@ function goTab(name) {
 // 得獎慶：7-11 冷凍小計滿$720 免冷凍運費；商品小計滿$1200 送湯。名額由後端回傳。
 // 後端尚未支援時回應不含 shipActive，會維持預設（開啟）。舊的 7-11 免運名額不會被扣。
 const CAMPAIGN_ID = '2026-award';
+// 活動期限：12/20 23:59（台灣時間）後，免運、滿額贈、好友推薦禮自動停止
+const CAMPAIGN_END = new Date('2026-12-20T23:59:59+08:00');
+let campaignServerOn = true;
+function campaignOn() { return campaignServerOn && Date.now() <= CAMPAIGN_END.getTime(); }
 const CAMPAIGN_SHIP_MIN = 720;
 const CAMPAIGN_GIFT_MIN = 1200;
 const CAMPAIGN_GIFT_NAME = '贈品｜金華火腿老母雞湯 300cc';
@@ -1719,6 +1781,7 @@ let campaignShipActive = true, campaignShipRemaining = null;
 let campaignGiftActive = true, campaignGiftRemaining = null;
 
 function applyCampaignStatus(data) {
+  if (data && data.campaignOn === false) campaignServerOn = false;
   if (data && typeof data.shipActive === 'boolean') {
     campaignShipActive = data.shipActive;
     campaignShipRemaining = data.shipRemaining;
@@ -1775,18 +1838,437 @@ function fetchCampaignStatus() {
     .catch(err => console.log('得獎慶名額查詢失敗，維持預設值', err));
 }
 
+// ══════════════════════════════════════
+//  【2026/11】好友推薦碼（結帳用）＋推薦人專區
+//  門檻與贈品由後端 checkReferral 回傳，跟著當檔活動走
+// ══════════════════════════════════════
+let referral = { code: '', valid: false, checked: false, min: 1200, giftName: '超厚片法式吐司 1 片' };
+
+function referralCodeEligible() {
+  return referral.valid && calcShip().itemsSubtotal >= referral.min;
+}
+function referralGiftEligible() {
+  return referralCodeEligible() && campaignOn() && !!referral.giftName;
+}
+
+function referralInputChanged() {
+  const v = (document.getElementById('ref-code-input').value || '').trim().toUpperCase();
+  if (v !== referral.code) { referral.valid = false; referral.checked = false; referral.code = v; renderReferralStatus(); renderCart(); }
+}
+
+async function applyReferralCode() {
+  const input = document.getElementById('ref-code-input');
+  const code = (input.value || '').trim().toUpperCase();
+  input.value = code;
+  referral.code = code; referral.valid = false; referral.checked = false;
+  if (!code) { renderReferralStatus(); renderCart(); return; }
+  const msg = document.getElementById('ref-code-msg');
+  if (msg) { msg.style.color = 'var(--text-sub)'; msg.textContent = '確認中…'; }
+  try {
+    const r = await fetch(APPS_SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ action: 'checkReferral', code: code }) }).then(x => x.json());
+    referral.valid = !!r.valid; referral.checked = true;
+    if (r.min) referral.min = Number(r.min);
+    referral.giftName = r.giftName || '';
+  } catch (e) {
+    referral.checked = false;
+    if (msg) { msg.style.color = '#c0392b'; msg.textContent = '連線失敗，請再按一次「套用」'; }
+    return;
+  }
+  renderReferralStatus(); renderCart();
+}
+
+function renderReferralStatus() {
+  const msg = document.getElementById('ref-code-msg');
+  if (!msg) return;
+  if (!referral.code || !referral.checked) { msg.textContent = ''; return; }
+  if (!referral.valid) { msg.style.color = '#c0392b'; msg.textContent = '❌ 查無此推薦碼，請再確認一次'; return; }
+  const sub = calcShip().itemsSubtotal;
+  const hasGift = campaignOn() && !!referral.giftName;
+  if (sub >= referral.min) {
+    msg.style.color = '#1f6b3a'; msg.textContent = hasGift ? '✅ 已套用好友推薦碼，加贈 ' + referral.giftName : '✅ 已套用好友推薦碼';
+  } else {
+    msg.style.color = '#8a4b00';
+    msg.textContent = '✅ 推薦碼有效｜商品小計滿 $' + referral.min.toLocaleString() + (hasGift ? ' 加贈 ' + referral.giftName : ' 即可使用') + '，還差 $' + (referral.min - sub).toLocaleString();
+  }
+}
+
+// ── 推薦人專區 ──
+let refMonthOffset = 0, refLastCode = '';
+function refEsc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+function refPost(payload) {
+  return fetch(APPS_SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(payload) }).then(r => r.json());
+}
+function refBody(html) { document.getElementById('ref-body').innerHTML = html; }
+function closeReferral() { document.getElementById('refOverlay').classList.remove('show'); }
+
+function openReferral() {
+  document.getElementById('refOverlay').classList.add('show');
+  refInfoOpen = 'x'; refInfoToggle('x');
+  // 後台沒有姓名或手機時：直接顯示申請表，請他自己填完整
+  if (!member || !member.name || !member.phone) { renderRefApply(); return; }
+  refBody('<div class="ref-card ref-note">讀取中…</div>');
+  refPost({ action: 'referralLookup', name: member.name, phone: member.phone })
+    .then(r => {
+      if (r.state === 'active') renderRefLogin();
+      else if (r.state === 'pending') renderRefPending();
+      else if (r.state === 'disabled') refBody('<div class="ref-card ref-note">您的推薦人資格目前暫停中，如有問題請聯繫 LINE <strong>@571tkwnh</strong>。</div>');
+      else renderRefApply();
+    })
+    .catch(() => refBody('<div class="ref-card ref-note">連線失敗，請稍後再試一次。</div>'));
+}
+
+function renderRefPending() {
+  refBody('<div class="ref-card"><div style="font-size:15px;font-weight:700;margin-bottom:6px">📨 申請審核中</div>' +
+    '<div class="ref-note">謝謝您申請成為推薦人！審核通過後，喵老師會以 LINE 通知您的專屬推薦碼。</div></div>');
+}
+
+function refH(t) { return '<div style="font-size:13.5px;font-weight:700;color:var(--espresso);margin:14px 0 6px">' + t + '</div>'; }
+function refLaw(name, body) { return '<div style="background:var(--white);border:1px solid var(--border-color);border-radius:10px;padding:10px 12px;margin-bottom:8px">' +
+  '<div style="font-weight:700;color:#8a4b00;margin-bottom:4px">' + name + '</div>' + body + '</div>'; }
+function refLawCards() {
+  const law = refLaw;
+  return '' +
+    law('本公司推薦人回饋制度「非」多層次傳銷',
+      '推薦人只就<b>自己推薦的好友實際購買並完成付款</b>的訂單取得回饋金。加入不需繳費、不需囤貨、沒有上下線層級，' +
+      '<b>介紹他人成為推薦人不會獲得任何報酬</b>，與多層次傳銷管理法第 3 條所稱「透過傳銷商介紹他人參加，建立多層級組織」的行銷方式不同。<br>' +
+      '推薦人不得對外宣稱本制度為傳銷，亦不得以招募下線、保證收入作為號召。') +
+    law('食品安全衛生管理法 第 28 條｜不得宣稱療效、不得誇大不實',
+      '食品的標示、宣傳或廣告，不得有不實、誇張或易生誤解的情形，也<b>不得宣稱具有醫療效能</b>（例如：治療、預防疾病、降血糖、改善體質）。<br>' +
+      '違反者依同法第 45 條，可處新臺幣 4 萬元以上 400 萬元以下罰鍰；宣稱醫療效能者，可處 60 萬元以上 500 萬元以下罰鍰。') +
+    law('公平交易法 第 21 條｜推薦內容不得引人錯誤',
+      '推薦（薦證）內容不得虛偽不實或引人錯誤。推薦人<b>明知或可得而知</b>推薦內容有引人錯誤之虞而仍推薦者，<b>須與廣告主負連帶損害賠償責任</b>。') +
+    law('揭露合作關係',
+      '您的推薦屬於「有回饋」的推薦，分享時請清楚註明合作關係，例如「推薦碼／有回饋」，避免讓消費者誤以為是單純的個人使用心得。') +
+    law('不得冒用公司名義',
+      '推薦人<b>不得自稱為本公司員工</b>，亦<b>不得藉本公司名義販售其他產品</b>或從事與本合作無關的行為。') +
+    '';
+}
+function refLawArticles() {
+  return '' +
+    '<div style="background:var(--white);border:1px solid var(--border-color);border-radius:10px;padding:10px 12px;font-size:12px;line-height:1.75">' +
+      '<div style="font-weight:700;margin-top:2px">食品安全衛生管理法 第 28 條</div>' +
+      '<div>第 1 項：食品、食品添加物、食品用洗潔劑及經中央主管機關公告之食品器具、食品容器或包裝，其標示、宣傳或廣告，不得有不實、誇張或易生誤解之情形。</div>' +
+      '<div>第 2 項：食品不得為醫療效能之標示、宣傳或廣告。</div>' +
+      '<div style="font-weight:700;margin-top:8px">食品安全衛生管理法 第 45 條第 1 項</div>' +
+      '<div>違反第二十八條第一項或中央主管機關依第二十八條第三項所定辦法者，處新臺幣四萬元以上四百萬元以下罰鍰；違反同條第二項規定者，處新臺幣六十萬元以上五百萬元以下罰鍰；再次違反者，並得命其歇業、停業一定期間、廢止其公司、商業、工廠之全部或部分登記事項，或食品業者之登錄；經廢止登錄者，一年內不得再申請重新登錄。</div>' +
+      '<div style="font-weight:700;margin-top:8px">公平交易法 第 21 條第 5 項</div>' +
+      '<div>廣告薦證者明知或可得而知其所從事之薦證有引人錯誤之虞，而仍為薦證者，與廣告主負連帶損害賠償責任。但廣告薦證者非屬知名公眾人物、專業人士或機構，僅於受廣告主報酬十倍之範圍內，與廣告主負連帶損害賠償責任。</div>' +
+      '<div style="font-weight:700;margin-top:8px">多層次傳銷管理法 第 3 條</div>' +
+      '<div>本法所稱多層次傳銷，指透過傳銷商介紹他人參加，建立多層級組織以推廣、銷售商品或服務之行銷方式。</div>' +
+    '</div>' +
+    '';
+}
+function refPayoutHtml() {
+  return '<div style="font-size:12.5px;line-height:1.8;color:var(--text-mid)">' +
+    refH('撥款流程') +
+    '<ol style="padding-left:18px;margin:0">' +
+      '<li>每月 1 日起累計至月底，月底結算當月回饋金（不跨月）。</li>' +
+      '<li>次月 15 日以前，本公司寄發回饋金通知信與空白「勞務報酬單」（附填寫範本）。</li>' +
+      '<li>推薦人依範本填寫（含身分證字號、戶籍地址、匯款銀行帳戶）並簽名，連同身分證正反面影本、存簿影本，於 <b>2 日內</b>以 Email 回傳。</li>' +
+      '<li>收到回傳後 <b>2 日內</b>撥款至推薦人本人帳戶。</li>' +
+    '</ol>' +
+    refH('半年獎金發放') +
+    '<div>上半年（1–6 月）獎金於 7/15 前、下半年（7–12 月）獎金於次年 1/15 前，隨勞務報酬單發放。</div>' +
+    refH('撥款帳戶') +
+    '<div>不需事先提供存摺。每次領取回饋金時，請依範本在勞務報酬單（金額欄留白，由公司填寫）填寫匯款銀行帳戶，連同身分證正反面影本、存簿影本以 Email 回傳至 farmfun2024@gmail.com。<b>基於個資安全考量，不接受以 LINE 傳送。</b></div>' +
+    '<div style="background:#fdf6e3;border:1px solid #e8d080;border-radius:8px;padding:8px 10px;margin-top:8px">⚠️ 本公司撥款帳戶為華南銀行；非華南銀行帳戶，跨行轉帳手續費 $10～15 將由撥款金額中扣除。</div>' +
+    '<div style="background:#fdecea;border:1px solid #f5c2bd;border-radius:8px;padding:8px 10px;margin-top:8px;color:#8a1f12">🚨 <b>防詐騙提醒</b>：本公司（好放心飲食行銷有限公司）<b>不會主動以電話聯繫索取個資</b>，相關證件傳輸皆使用公司 Email（farmfun2024@gmail.com）往來，請慎防詐騙。</div>' +
+    refH('稅務') +
+    '<div>回饋金屬於個人所得。單次給付未達新臺幣 2 萬元時，本公司不代扣所得稅及二代健保補充保費；達到法定門檻時，將依規定代扣。回饋金仍請於年度綜合所得稅一併申報。</div>' +
+    '</div>';
+}
+function refLawsHtml() {
+  return '<div style="font-size:12.5px;line-height:1.8;color:var(--text-mid)">' + refLawCards() +
+    refH('違約處理') + '<div>違反上述任一規定者，本公司將立即終止合作關係，並保留相關法律追訴權利。</div>' +
+    refH('相關法律條款') + refLawArticles() + '</div>';
+}
+let refInfoOpen = '';
+function refInfoToggle(key) {
+  refInfoOpen = refInfoOpen === key ? '' : key;
+  document.querySelectorAll('.ref-info-btn').forEach(b => b.classList.toggle('on', b.dataset.k === refInfoOpen));
+  const box = document.getElementById('ref-info-panel');
+  box.innerHTML = refInfoOpen === 'law' ? refLawsHtml() : refInfoOpen === 'tier' ? refTiersHtml() : refInfoOpen === 'pay' ? refPayoutHtml() : '';
+  box.style.display = refInfoOpen ? 'block' : 'none';
+}
+
+// 回饋級距（只改這裡；後台 REFERRAL_TIERS 要同步）
+const REF_TIERS = [
+  { min: 0,     max: 19999, rate: 8 },
+  { min: 20000, max: 39999, rate: 9 },
+  { min: 40000, max: 59999, rate: 10 },
+  { min: 60000, max: null,  rate: 12 },
+];
+function refTierShort() {
+  return REF_TIERS.map(t => (t.max == null ? '$' + t.min.toLocaleString() + ' 以上 ' : (t.min === 0 ? '$' + t.max.toLocaleString() + ' 以下 ' : '$' + t.min.toLocaleString() + '–' + t.max.toLocaleString() + ' ')) + t.rate + '%').join('｜');
+}
+function refTiersHtml() {
+  const rows = REF_TIERS.map((t, i) =>
+    '<tr><td style="padding:7px 6px;border-bottom:1px solid var(--border-color)">級距 ' + (i + 1) + '</td>' +
+    '<td style="padding:7px 6px;border-bottom:1px solid var(--border-color)">' + (t.max == null ? '$' + t.min.toLocaleString() + ' 以上' : '$' + t.min.toLocaleString() + ' ～ $' + t.max.toLocaleString()) + '</td>' +
+    '<td style="padding:7px 6px;border-bottom:1px solid var(--border-color);text-align:right;font-weight:700;color:var(--espresso)">' + t.rate + '%</td></tr>').join('');
+  const ex = REF_TIERS[1] || REF_TIERS[0], exAmt = ex.min + 5000;
+  return '<div class="ref-note" style="font-size:12.5px">' +
+    '<div>・<b>計算期間</b>：每月 1 日起累計至月底，不跨月</div>' +
+    '<div>・<b>計算基礎</b>：當月完成付款的推薦訂單「商品小計」（不含運費）</div>' +
+    '<div>・<b>使用門檻</b>：好友單筆商品小計滿 $' + referral.min.toLocaleString() + ' 才能使用推薦碼</div>' +
+    '<div>・<b>撥款流程</b>：次月 15 日以前寄發勞務報酬單 → 2 日內簽名回傳 → 收到後 2 日內撥款</div>' +
+    '<table style="width:100%;border-collapse:collapse;margin:10px 0;font-size:13px"><thead><tr style="background:var(--caramel-light)">' +
+    '<th style="padding:7px 6px;text-align:left">級距</th><th style="padding:7px 6px;text-align:left">當月累計推薦消費額</th><th style="padding:7px 6px;text-align:right">回饋</th></tr></thead><tbody>' + rows + '</tbody></table>' +
+    '<div>・整月消費額套用同一個成數。例如當月累計 $' + exAmt.toLocaleString() + '，整月以 ' + ex.rate + '% 計算＝$' + Math.round(exAmt * ex.rate / 100).toLocaleString() + '</div>' +
+    '<div style="margin-top:10px;font-weight:700;color:var(--espresso)">🏅 半年獎金</div>' +
+    '<div>・每年兩期：1–6 月、7–12 月（首期為 2026/11–2027/06）</div>' +
+    '<div>・期間內至少 4 個月「當月推薦消費額達 $20,000」才有資格</div>' +
+    '<div>・獎金＝半年累計推薦消費額 × 2% × 達標月數 ÷ 6</div>' +
+    '<table style="width:100%;border-collapse:collapse;margin:8px 0;font-size:12.5px"><thead><tr style="background:var(--caramel-light)"><th style="padding:6px;text-align:left">達標月數（6 個月期）</th><th style="padding:6px;text-align:right">獎金</th><th style="padding:6px;text-align:right">每月 $25,000 試算</th></tr></thead><tbody>' +
+      '<tr><td style="padding:6px">6 個月</td><td style="padding:6px;text-align:right">2% 全額</td><td style="padding:6px;text-align:right">$3,000</td></tr>' +
+      '<tr><td style="padding:6px">5 個月</td><td style="padding:6px;text-align:right">5/6</td><td style="padding:6px;text-align:right">$2,500</td></tr>' +
+      '<tr><td style="padding:6px">4 個月</td><td style="padding:6px;text-align:right">4/6</td><td style="padding:6px;text-align:right">$2,000</td></tr>' +
+      '<tr><td style="padding:6px">3 個月以下</td><td style="padding:6px;text-align:right">不發放</td><td style="padding:6px;text-align:right">$0</td></tr></tbody></table>' +
+    '<div>・上半年獎金 7/15 前、下半年獎金次年 1/15 前，隨勞務報酬單發放</div>' +
+    '</div>';
+}
+function refTiersToggle(btn) {
+  const box = btn.nextElementSibling;
+  const open = box.style.display !== 'block';
+  box.innerHTML = open ? refTiersHtml() : '';
+  box.style.display = open ? 'block' : 'none';
+  btn.textContent = open ? '📊 收起級距說明' : '📊 回饋級距說明';
+}
+function refTiersBlock() {
+  return '<button type="button" class="ref-month" style="width:100%;margin-top:10px" onclick="refTiersToggle(this)">📊 回饋級距說明</button>' +
+    '<div style="display:none;margin-top:10px;background:var(--cream);border-radius:10px;padding:12px"></div>';
+}
+
+function refTermsHtml() {
+  const h = t => '<div style="font-size:13.5px;font-weight:700;color:var(--espresso);margin:14px 0 6px">' + t + '</div>';
+  const li = t => '<li style="margin-bottom:6px">' + t + '</li>';
+  const law = (name, body) => '<div style="background:var(--white);border:1px solid var(--border-color);border-radius:10px;padding:10px 12px;margin-bottom:8px">' +
+    '<div style="font-weight:700;color:#8a4b00;margin-bottom:4px">' + name + '</div>' + body + '</div>';
+  return '<div style="font-size:12.5px;line-height:1.8;color:var(--text-mid)">' +
+    h('一、合作規則') + '<ol style="padding-left:18px;margin:0">' +
+      li('<b>使用門檻：</b>好友單筆商品小計滿指定金額（目前為 $' + referral.min.toLocaleString() + '，依當期活動調整）才能使用推薦碼。') +
+      li('<b>回饋金計算：</b>每月 1 日起累計至當月最後一日，不跨月計算；依當月完成付款的推薦訂單「商品小計」累計（不含運費），整月套用同一成數：' + refTierShort() + '。') +
+      li('<b>半年獎金：</b>每年兩期：上半年 1–6 月、下半年 7–12 月（首期為 2026/11–2027/06）。期間內至少 4 個月「當月推薦消費額達 $20,000」，即可獲得半年獎金＝<b>半年累計推薦消費額 × 2% × 達標月數 ÷ 6</b>；未達 4 個月者不發放。上半年獎金於 7/15 前、下半年獎金於次年 1/15 前隨勞務報酬單發放；發放時須仍為合作中的推薦人，且未違反推薦人須知。') +
+      li('<b>回饋金發放：</b>每月月底結算，<b>次月 15 日以前</b>寄發勞務報酬單，請於收到後 <b>2 日內</b>簽名回傳；收到回傳後 <b>2 日內</b>撥款至推薦人本人帳戶。勞務報酬單請依範本填寫身分證字號、戶籍地址與匯款銀行帳戶並簽名，連同身分證正反面影本、存簿影本以 Email 回傳至 farmfun2024@gmail.com，不需事先提供存摺（基於個資安全考量，不接受以 LINE 傳送）。本公司撥款帳戶為華南銀行，<b>非華南銀行帳戶將由撥款金額中扣除跨行轉帳手續費 $10～15</b>。') +
+      li('<b>身分：</b>推薦人與本公司為合作推薦關係，<b>非本公司員工</b>。') +
+    '</ol>' +
+    h('二、推薦人應遵守的相關法規') +
+    refLawCards() +
+    h('三、違約處理') +
+    '<div>違反上述任一規定者，本公司將<b>立即終止合作關係</b>，並保留相關法律追訴權利。</div>' +
+    h('四、稅務') +
+    '<div>回饋金屬於個人所得。單次給付未達新臺幣 2 萬元時，本公司不代扣所得稅及二代健保補充保費；達到法定門檻時，將依規定代扣。回饋金仍請於年度綜合所得稅一併申報。</div>' +
+    h('五、個人資料') +
+    '<div>您提供的資料（含名片）僅用於推薦人審核、聯繫及回饋金結算，不會提供給第三方。</div>' +
+    '<div style="background:#fdecea;border:1px solid #f5c2bd;border-radius:8px;padding:8px 10px;margin-top:8px;color:#8a1f12">🚨 <b>防詐騙提醒</b>：本公司（好放心飲食行銷有限公司）<b>不會主動以電話聯繫索取個資</b>，相關證件傳輸皆使用公司 Email（farmfun2024@gmail.com）往來，請慎防詐騙。</div>' +
+    h('六、相關法律條款') +
+    refLawArticles() +
+    '</div>';
+}
+
+let refCardData = '';
+
+// 基本資料：LINE 會員資料已經有的就直接帶入（不能改）；沒有的就請他填
+function refProfileField(id, label, val, type, ph) {
+  const has = String(val || '').trim() !== '';
+  return '<div class="form-group"><label class="form-label">' + label + (has ? '' : ' <span class="req">*</span>') + '</label>' +
+    (has ? '<input class="form-input readonly" id="' + id + '" readonly value="' + refEsc(val) + '">'
+         : '<input class="form-input" id="' + id + '" type="' + type + '" placeholder="' + ph + '" autocomplete="off"' + (id === 'ref-phone' ? ' oninput="refCodePreview()"' : '') + '>') +
+    '</div>';
+}
+
+function renderRefApply() {
+  const mb = member || {};
+  const missing = !mb.name || !mb.phone || !mb.email;
+  const sel = ['口碑行銷', '自有私域群組', '自媒體', '平台刊登', '其他'].map(o => '<option value="' + o + '">' + o + '</option>').join('');
+  refBody(
+    '<div class="ref-card"><div style="font-size:15px;font-weight:700;margin-bottom:6px">🌱 我想成為推薦人</div>' +
+    '<div class="ref-note">把喵老師的好湯好肉分享給朋友！朋友用您的推薦碼購物滿 $' + referral.min.toLocaleString() + '，就能獲得好友推薦禮；訂單完成付款後，您也會獲得回饋金。</div></div>' +
+    (missing ? '<div class="ref-card ref-note">我們還沒有您的完整資料，請補齊下方標 <span class="req">*</span> 的欄位（含英文名字）。</div>' : '') +
+    '<div class="ref-card">' +
+      '<div class="form-group"><label class="form-label">英文名字 <span class="req">*</span></label>' +
+        '<input class="form-input" id="ref-en" placeholder="例如 Mike" autocomplete="off" oninput="refCodePreview()">' +
+        '<div class="ref-msg" id="ref-en-preview" style="color:var(--text-sub)"></div></div>' +
+      refProfileField('ref-name', '中文姓名', mb.name, 'text', '例如 王小明') +
+      refProfileField('ref-phone', '手機號碼', mb.phone, 'tel', '例如 0912345678') +
+      refProfileField('ref-email', 'Email', mb.email, 'email', '例如 name@gmail.com') +
+      '<div class="form-group"><label class="form-label">我的推薦方式 <span class="req">*</span></label>' +
+        '<select class="form-input" id="ref-method"><option value="">請選擇</option>' + sel + '</select></div>' +
+      '<div class="form-group"><label class="form-label">說明 <span class="req">*</span>（請提供相關連結或文字說明）</label>' +
+        '<textarea class="form-input" id="ref-method-detail" rows="3" placeholder="例如：社群粉專連結、群組人數與性質"></textarea></div>' +
+      '<div class="form-group"><label class="form-label">目前從事工作 <span class="req">*</span></label>' +
+        '<input class="form-input" id="ref-job" placeholder="例如：餐飲業、教師、自由工作者"></div>' +
+      '<div class="form-group"><label class="form-label">名片 <span class="req">*</span>（請上傳一張名片照片）</label>' +
+        '<input class="form-input" id="ref-card" type="file" accept="image/*" onchange="refCardPicked(this)">' +
+        '<img id="ref-card-preview" alt="名片預覽" style="display:none;margin-top:8px;max-width:100%;border-radius:8px;border:1px solid var(--border-color)"></div>' +
+      '<div class="form-group"><label class="form-label">為什麼想成為推薦人？ <span class="req">*</span></label>' +
+        '<textarea class="form-input" id="ref-reason" rows="3"></textarea></div>' +
+      '<div class="form-group"><div style="font-size:15px;font-weight:700;color:var(--espresso);margin-bottom:4px">📜 推薦人須知、相關法規及法律條款</div>' +
+        '<div style="background:var(--cream);border-radius:10px;padding:4px 14px 14px">' + refTermsHtml() + '</div>' +
+        '<label style="display:flex;gap:8px;align-items:flex-start;margin-top:12px;font-size:13.5px;font-weight:700"><input type="checkbox" id="ref-agree" style="margin-top:4px;width:18px;height:18px">我已經閱讀並同意以上推薦人須知、相關法規及法律條款</label></div>' +
+      '<button class="btn-primary" id="ref-apply-submit" onclick="submitRefApply()">送出申請</button>' +
+      '<div class="ref-msg" id="ref-apply-msg"></div>' +
+    '</div>');
+}
+
+function refCodePreview() {
+  const en = (document.getElementById('ref-en').value || '').replace(/[^A-Za-z]/g, '').toUpperCase().slice(0, 12);
+  const ph = document.getElementById('ref-phone');
+  const tail = String((ph && ph.value) || (member && member.phone) || '').replace(/\D/g, '').slice(-3);
+  document.getElementById('ref-en-preview').textContent = en.length >= 2 ? '您的推薦碼預計為：' + en + tail + '（審核通過後啟用）' : '';
+}
+
+// 名片照片：先在手機上縮小成 1200px JPEG，再上傳
+function refCardPicked(input) {
+  refCardData = '';
+  const f = input.files && input.files[0];
+  const prev = document.getElementById('ref-card-preview');
+  if (!f) { prev.style.display = 'none'; return; }
+  const img = new Image();
+  const reader = new FileReader();
+  reader.onload = e => { img.src = e.target.result; };
+  img.onload = () => {
+    const max = 1200, sc = Math.min(1, max / Math.max(img.width, img.height));
+    const c = document.createElement('canvas');
+    c.width = Math.round(img.width * sc); c.height = Math.round(img.height * sc);
+    c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+    refCardData = c.toDataURL('image/jpeg', 0.82);
+    prev.src = refCardData; prev.style.display = 'block';
+  };
+  reader.readAsDataURL(f);
+}
+
+function submitRefApply() {
+  const val = id => (document.getElementById(id).value || '').trim();
+  const msg = document.getElementById('ref-apply-msg');
+  const bad = t => { msg.style.color = '#c0392b'; msg.textContent = t; };
+  const pName = val('ref-name'), pPhone = val('ref-phone').replace(/[\s-]/g, ''), pEmail = val('ref-email');
+  if (pName.length < 2) return bad('請填寫中文姓名');
+  if (!/^09\d{8}$/.test(pPhone)) return bad('請填寫正確的手機號碼（09 開頭共 10 碼）');
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(pEmail)) return bad('請填寫正確的 Email');
+  if (val('ref-en').replace(/[^A-Za-z]/g, '').length < 2) return bad('請填寫英文名字（至少 2 個英文字母）');
+  if (!val('ref-method')) return bad('請選擇推薦方式');
+  if (!val('ref-method-detail')) return bad('請填寫推薦方式的說明或連結');
+  if (!val('ref-job')) return bad('請填寫目前從事工作');
+  if (!refCardData) return bad('請上傳一張名片照片');
+  if (!val('ref-reason')) return bad('請說明為什麼想成為推薦人');
+  if (!document.getElementById('ref-agree').checked) return bad('請先閱讀並勾選「我已經閱讀並同意」，才能送出申請');
+  const btn = document.getElementById('ref-apply-submit');
+  btn.disabled = true; btn.textContent = '送出中…';
+  const mb = member || {};
+  refPost({ action: 'applyReferral', name: pName, phone: pPhone, email: pEmail,
+            displayName: mb.displayName || '', lineId: (mb.lineId && mb.lineId !== 'Uf_demo_001') ? mb.lineId : '', englishName: val('ref-en'),
+            method: val('ref-method'), methodDetail: val('ref-method-detail'), job: val('ref-job'),
+            reason: val('ref-reason'), cardImage: refCardData, agree: true })
+    .then(r => {
+      if (r.ok) {
+        // 申請時填的資料存回這支手機，下次就不用再填
+        member = Object.assign({}, mb, { name: pName, phone: pPhone, email: pEmail });
+        try { localStorage.setItem('idream_member', JSON.stringify(member)); } catch (e) {}
+        if (r.state === 'active') renderRefLogin(); else renderRefPending(); return;
+      }
+      btn.disabled = false; btn.textContent = '送出申請'; bad(r.message || '送出失敗，請再試一次');
+    })
+    .catch(() => { btn.disabled = false; btn.textContent = '送出申請'; bad('連線失敗，請再試一次'); });
+}
+
+function renderRefLogin() {
+  refBody(
+    '<div class="ref-card"><div style="font-size:15px;font-weight:700;margin-bottom:10px">💰 查詢我的回饋金</div>' +
+      '<div class="form-group"><label class="form-label">中文姓名</label><input class="form-input readonly" readonly value="' + refEsc(member.name) + '"></div>' +
+      '<div class="form-group"><label class="form-label">手機號碼</label><input class="form-input readonly" readonly value="' + refEsc(member.phone) + '"></div>' +
+      '<div class="form-group"><label class="form-label">推薦碼</label><input class="form-input" id="ref-my-code" style="text-transform:uppercase" placeholder="例如 MIKE678" value="' + refEsc(refLastCode) + '"></div>' +
+      '<button class="btn-primary" onclick="refMonthOffset=0;loadRefSummary()">查詢</button>' +
+      '<div class="ref-msg" id="ref-login-msg"></div>' +
+    '</div><div id="ref-result"></div>');
+}
+
+function refHalfHtml(h) {
+  if (!h || !h.months) return '';
+  const dots = (h.displayMonths || h.months).map(m => '<div style="flex:1;min-width:0;text-align:center"><div style="height:8px;border-radius:4px;background:' + (m.hit ? 'var(--caramel)' : 'var(--border-color)') + '"></div>' +
+    '<div style="font-size:10.5px;color:var(--text-sub);margin-top:3px">' + Number(m.ym.slice(5)) + '月</div></div>').join('');
+  const left = Math.max(0, h.need - h.hit);
+  const status = h.eligible
+    ? '✅ 已達資格！目前預估半年獎金 <b>$' + Number(h.bonus).toLocaleString() + '</b>（達標 ' + h.hit + ' 個月）'
+    : '再 <b>' + left + '</b> 個月達標（當月推薦消費額達 $' + Number(h.target).toLocaleString() + '）即可領半年獎金';
+  return '<div class="ref-card"><div style="font-size:13px;font-weight:700;margin-bottom:6px">🏅 半年獎金進度｜' + refEsc(h.label) + '</div>' +
+    '<div style="display:flex;gap:4px;margin-bottom:8px">' + dots + '</div>' +
+    '<div class="ref-note">已達標 <b>' + h.hit + '</b> 個月（需 ' + h.need + ' 個月）｜期間累計 $' + Number(h.total).toLocaleString() + '</div>' +
+    '<div class="ref-msg" style="color:#8a4b00">' + status + '</div>' +
+    '<div class="ref-note" style="font-size:11.5px;margin-top:4px">發放期限：' + refEsc(h.payBy) + ' 前，隨勞務報酬單發放</div></div>';
+}
+
+// 最近 6 個月「推薦人數」長條圖；點長條可切換到該月的明細
+function refChartHtml(hist, curYm) {
+  if (!hist || !hist.length) return '';
+  const max = Math.max(1, ...hist.map(h => h.people));
+  const bars = hist.map((h, i) => {
+    const on = h.ym === curYm;
+    const ht = Math.round(h.people / max * 90);
+    return '<button type="button" onclick="refMonthOffset=' + (hist.length - 1 - i) + ';loadRefSummary()" aria-label="' + h.ym + ' 推薦 ' + h.people + ' 人" ' +
+      'style="flex:1;min-width:0;background:none;border:none;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:128px;font-family:inherit">' +
+      '<span style="font-size:11px;font-weight:700;color:' + (on ? 'var(--espresso)' : 'var(--text-sub)') + ';margin-bottom:3px">' + h.people + '</span>' +
+      '<span style="display:block;width:70%;max-width:34px;height:' + Math.max(ht, h.people ? 6 : 2) + 'px;border-radius:5px 5px 0 0;background:' + (on ? 'var(--caramel)' : 'var(--latte)') + '"></span>' +
+      '<span style="font-size:11px;margin-top:4px;color:' + (on ? 'var(--espresso)' : 'var(--text-sub)') + ';font-weight:' + (on ? 700 : 400) + '">' + Number(h.ym.slice(5)) + '月</span></button>';
+  }).join('');
+  return '<div style="font-size:13px;font-weight:700;margin-bottom:2px">📈 每月推薦人數</div>' +
+    '<div class="ref-note" style="font-size:11.5px;margin-bottom:6px">點長條可查看該月明細</div>' +
+    '<div style="display:flex;gap:4px;align-items:flex-end;border-bottom:1px solid var(--border-color);margin-bottom:12px">' + bars + '</div>';
+}
+
+function refMonthStr(offset) {
+  const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() - offset);
+  return d.getFullYear() + '/' + String(d.getMonth() + 1).padStart(2, '0');
+}
+
+function loadRefSummary() {
+  const codeEl = document.getElementById('ref-my-code');
+  const code = (codeEl.value || '').trim().toUpperCase();
+  const msg = document.getElementById('ref-login-msg');
+  if (!code) { msg.style.color = '#c0392b'; msg.textContent = '請輸入推薦碼'; return; }
+  refLastCode = code;
+  msg.style.color = 'var(--text-sub)'; msg.textContent = '查詢中…';
+  refPost({ action: 'referralSummary', name: member.name, phone: member.phone, code: code, month: refMonthStr(refMonthOffset) })
+    .then(r => {
+      if (!r.ok) { msg.style.color = '#c0392b'; msg.textContent = r.message || '姓名、手機號碼或推薦碼不正確'; document.getElementById('ref-result').innerHTML = ''; return; }
+      msg.textContent = '';
+      const rows = (r.items || []).map(it =>
+        '<div class="ref-row"><span>' + refEsc(it.date) + '　' + refEsc(it.buyer) + '</span><span>' +
+        (it.status === '已扣回' ? '<s>小計 $' + Number(it.subtotal).toLocaleString() + '</s> 已扣回' : '小計 $' + Number(it.subtotal).toLocaleString()) + '</span></div>').join('');
+      const pct = Math.round(Number(r.rate) * 1000) / 10 + '%';
+      const nextTxt = r.next ? '再累計 $' + Number(r.next.need).toLocaleString() + '，回饋成數升級為 ' + Math.round(r.next.rate * 100) + '%' : '';
+      document.getElementById('ref-result').innerHTML =
+        '<div class="ref-card">' +
+          refChartHtml(r.history, r.month) +
+          '<div class="ref-note">' + refEsc(r.name) + ' 您好｜' + refEsc(r.month) + ' 預估回饋金</div>' +
+          '<div class="ref-big">$' + Number(r.monthTotal).toLocaleString() + '</div>' +
+          '<div class="ref-stats" style="grid-template-columns:1fr 1fr 1fr"><div class="ref-stat"><b>$' + Number(r.monthSales).toLocaleString() + '</b><span>累計推薦消費額</span></div>' +
+          '<div class="ref-stat"><b>' + Number(r.monthPeople || 0) + ' 人</b><span>推薦人數｜' + r.monthCount + ' 筆訂單</span></div>' +
+          '<div class="ref-stat"><b>' + pct + '</b><span>回饋成數</span></div></div>' +
+          (nextTxt ? '<div class="ref-msg" style="color:#8a4b00">🎯 ' + nextTxt + '</div>' : '') +
+        '</div>' + refHalfHtml(r.half) +
+        '<div class="ref-card"><div style="font-size:13px;font-weight:700;margin-bottom:4px">' + refEsc(r.month) + ' 推薦訂單明細</div>' +
+          (rows || '<div class="ref-note">這個月還沒有完成付款的推薦訂單</div>') +
+          '<div class="ref-note" style="margin-top:8px;font-size:11.5px">※ 好友完成付款後才會計入；每月 1 日起累計至月底，不跨月；次月 15 日以前寄發勞務報酬單，回傳後 2 日內撥款；級距請見上方「📊 回饋金級距」。訂購人姓名已部分隱藏。</div>' +
+        '</div>';
+    })
+    .catch(() => { msg.style.color = '#c0392b'; msg.textContent = '連線失敗，請再試一次'; });
+}
+
 function giftEligible() {
-  return calcShip().itemsSubtotal >= CAMPAIGN_GIFT_MIN;
+  return campaignOn() && calcShip().itemsSubtotal >= CAMPAIGN_GIFT_MIN;
 }
 
 function pickupBagEligible() {
-  return selectedCarrier === 'pickup' && calcShip().itemsSubtotal >= CAMPAIGN_SHIP_MIN;
+  return campaignOn() && selectedCarrier === 'pickup' && calcShip().itemsSubtotal >= CAMPAIGN_SHIP_MIN;
 }
 
 function campaignGifts() {
   const gifts = [];
   if (giftEligible()) gifts.push(campaignGiftActive ? CAMPAIGN_GIFT_NAME : CAMPAIGN_SUB_GIFT_NAME);
   if (pickupBagEligible()) gifts.push(PICKUP_GIFT_NAME);
+  if (referralGiftEligible()) gifts.push('好友推薦禮｜' + referral.giftName);
   return gifts;
 }
 
@@ -1854,11 +2336,11 @@ function calcShip(carrier) {
   let coldFreeApplied = false, normalFreeApplied = false, usedShipQuota = false;
 
   // 免運限 7-ELEVEN：滿 $720（抖內金額可計入），限量 30 名；全家不適用
-  if (c === 'seven' && campaignShipActive && itemsSubtotal >= CAMPAIGN_SHIP_MIN) {
+  if (c === 'seven' && campaignOn() && campaignShipActive && itemsSubtotal >= CAMPAIGN_SHIP_MIN) {
     if (hasCold) { coldFee = 0; coldFreeApplied = true; usedShipQuota = true; }
   }
   // 常溫：僅 7-ELEVEN 滿 $720 免運，不佔冷凍免運的 30 名；全家一律收費
-  if (hasNormal && c === 'seven' && itemsSubtotal >= CAMPAIGN_SHIP_MIN) { normalFee = 0; normalFreeApplied = true; }
+  if (hasNormal && c === 'seven' && campaignOn() && itemsSubtotal >= CAMPAIGN_SHIP_MIN) { normalFee = 0; normalFreeApplied = true; }
 
   const fee = coldFee + normalFee;
   return { usedShipQuota, hasCold, hasNormal, coldSubtotal, normalSubtotal, itemsSubtotal, coldFee, normalFee, fee, coldFreeApplied, normalFreeApplied };
@@ -1878,6 +2360,7 @@ function lineTotal(k) {
 }
 
 function renderCart() {
+  setTimeout(renderReferralStatus, 0);
   const keys = Object.keys(qty).filter(k=>qty[k]>0);
   document.getElementById('cart-empty').style.display  = keys.length?'none':'block';
   document.getElementById('cart-filled').style.display = keys.length?'block':'none';
@@ -1947,7 +2430,7 @@ function updateCarrierFees() {
   const seven  = calcShip('seven');
 
   const pEl = document.getElementById('pickup-fee');
-  if (pEl) pEl.textContent = calcShip('pickup').itemsSubtotal >= CAMPAIGN_SHIP_MIN ? '免運費・加贈保冷袋🎁' : '免運費';
+  if (pEl) pEl.textContent = campaignOn() && calcShip('pickup').itemsSubtotal >= CAMPAIGN_SHIP_MIN ? '免運費・加贈保冷袋🎁' : '免運費';
   const fEl = document.getElementById('family-fee');
   const sEl = document.getElementById('seven-fee');
   if (fEl) {
@@ -1968,7 +2451,7 @@ function updateCarrierFees() {
   if (promoNote) {
     promoNote.style.display = 'block';
     promoNote.textContent = campaignShipActive
-      ? '🎉 得獎慶：選 7-ELEVEN，滿 $720 免冷凍運費（限量 30 組' +
+      ? '🎉 得獎慶（至 12/20）：選 7-ELEVEN，滿 $720 免冷凍運費（限量 30 組' +
         (campaignShipRemaining != null ? '，剩餘 ' + campaignShipRemaining + ' 組' : '') + '）'
       : '免運優惠已結束，目前依一般運費計算';
   }
@@ -2216,6 +2699,7 @@ async function confirmOrder() {
         usedCampaignShip: usedCampaignShip,
         usedCampaignGift: usedCampaignGift,
         usedPickupBag:    usedPickupBag,
+        referralCode:     referralCodeEligible() ? referral.code : '',
         pickupTime:       pickupTime,
       })
     });
