@@ -307,6 +307,12 @@ body {
 .season-text { font-size: 13px; line-height: 1.8; }
 .season-text strong { color: #ffe2b8; }
 .season-vid { display: block; width: 100%; max-width: 340px; margin: 0 auto; aspect-ratio: 9 / 16; border-radius: 12px; background: #000; object-fit: cover; }
+.season-btn { display: block; width: 100%; max-width: 340px; margin: 12px auto 0; padding: 13px 16px; border: none; border-radius: 999px; background: #fff8ec; color: #7a3b1d; font-size: 16px; font-weight: 900; font-family: inherit; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.18); }
+.info-overlay { display: none; position: fixed; inset: 0; z-index: 700; background: rgba(20,12,6,0.94); overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.info-overlay.show { display: block; }
+.info-overlay img { display: block; width: 100%; max-width: 640px; margin: 0 auto; padding: 72px 0 32px; }
+.info-close { position: fixed; top: 14px; right: 14px; z-index: 710; display: flex; align-items: center; gap: 6px; padding: 10px 18px; border: 3px solid #fff; border-radius: 999px; background: #c0311a; color: #fff; font-size: 18px; font-weight: 900; font-family: inherit; cursor: pointer; box-shadow: 0 6px 18px rgba(0,0,0,0.45); }
+.info-close b { font-size: 22px; line-height: 1; }
 .zone { border-radius: 16px; padding: 14px 12px 4px; margin-bottom: 14px; border: 1.5px solid; }
 .zone .product-card { margin-bottom: 10px; }
 .zone-head { margin: 0 2px 12px; }
@@ -686,6 +692,7 @@ body {
     <div class="season-wrap">
       <div class="season-kicker">🍂 秋冬主推</div>
       <video class="season-vid" src="2.mp4#t=0.5" autoplay muted loop playsinline controls preload="metadata"></video>
+      <button type="button" class="season-btn" onclick="openSimuInfo()">點我認識思慕雞湯 →</button>
     </div>
 
     <div class="award-box">
@@ -1380,6 +1387,12 @@ body {
   </div>
 </div>
 
+<!-- 思慕雞湯介紹（營養資訊圖） -->
+<div class="info-overlay" id="simuOverlay" onclick="if(event.target===this)closeSimuInfo()">
+  <button type="button" class="info-close" onclick="closeSimuInfo()" aria-label="關閉，回到購物車"><b>✕</b>關閉</button>
+  <img src="https://yaoliching.github.io/idream-info/soup-seafood.jpg" alt="姚家老火慢淬 海陸雙拼組合 營養資訊">
+</div>
+
 <!-- SUCCESS -->
 <div class="ref-overlay" id="refOverlay" onclick="if(event.target===this)closeReferral()">
   <div class="ref-sheet">
@@ -1900,6 +1913,22 @@ function refPost(payload) {
   return fetch(APPS_SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(payload) }).then(r => r.json());
 }
 function refBody(html) { document.getElementById('ref-body').innerHTML = html; }
+// 思慕雞湯介紹：開圖、按 ✕ 或手機返回鍵都回到購物車原畫面
+function openSimuInfo() {
+  const o = document.getElementById('simuOverlay');
+  o.classList.add('show'); o.scrollTop = 0;
+  document.body.style.overflow = 'hidden';
+  try { history.pushState({ simu: 1 }, ''); } catch (e) {}
+}
+function closeSimuInfo(fromPop) {
+  const o = document.getElementById('simuOverlay');
+  if (!o.classList.contains('show')) return;
+  o.classList.remove('show');
+  document.body.style.overflow = '';
+  if (!fromPop && history.state && history.state.simu) { try { history.back(); } catch (e) {} }
+}
+window.addEventListener('popstate', function () { closeSimuInfo(true); });
+
 function closeReferral() { document.getElementById('refOverlay').classList.remove('show'); }
 
 function openReferral() {
