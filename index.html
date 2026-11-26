@@ -234,7 +234,7 @@ body {
 .ref-month { flex: 1; padding: 8px; border-radius: 10px; border: 1.5px solid var(--border-color); background: var(--white); font-size: 12.5px; cursor: pointer; font-family: inherit; }
 .ref-month.on { border-color: var(--caramel); background: var(--caramel-light); font-weight: 700; }
 .ref-msg { font-size: 12.5px; margin-top: 8px; line-height: 1.7; }
-.ref-info-bar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 10px; }
+.ref-info-bar { display: grid; grid-template-columns: 1fr; gap: 6px; margin-bottom: 10px; }
 .ref-info-btn { padding: 9px 4px; border-radius: 10px; border: 1.5px solid var(--border-color); background: var(--white); font-size: 12px; font-weight: 700; color: var(--espresso); cursor: pointer; font-family: inherit; }
 .ref-info-btn.on { border-color: var(--caramel); background: var(--caramel-light); }
 .ref-code-row { display: flex; gap: 8px; }
@@ -1402,8 +1402,6 @@ body {
     </div>
     <div class="ref-info-bar">
       <button type="button" class="ref-info-btn" data-k="law" onclick="refInfoToggle('law')">📜 相關法規</button>
-      <button type="button" class="ref-info-btn" data-k="tier" onclick="refInfoToggle('tier')">📊 回饋金級距</button>
-      <button type="button" class="ref-info-btn" data-k="pay" onclick="refInfoToggle('pay')">💰 回饋金發放方式</button>
     </div>
     <div id="ref-info-panel" class="ref-card" style="display:none"></div>
     <div id="ref-body"></div>
@@ -1949,7 +1947,7 @@ function openReferral() {
 
 function renderRefPending() {
   refBody('<div class="ref-card"><div style="font-size:15px;font-weight:700;margin-bottom:6px">📨 申請審核中</div>' +
-    '<div class="ref-note">謝謝您申請成為推薦人！審核通過後，喵老師會以 LINE 通知您的專屬推薦碼。</div></div>');
+    '<div class="ref-note">謝謝您申請成為推薦人！推薦人說明已寄到您的 Email，請打開信件按下「我已閱讀並同意」。審核通過後，會以 Email 寄出您的專屬推薦碼。</div></div>');
 }
 
 function refH(t) { return '<div style="font-size:13.5px;font-weight:700;color:var(--espresso);margin:14px 0 6px">' + t + '</div>'; }
@@ -2112,8 +2110,8 @@ function renderRefApply() {
   const missing = !mb.name || !mb.phone || !mb.email;
   const sel = ['口碑行銷', '自有私域群組', '自媒體', '平台刊登', '其他'].map(o => '<option value="' + o + '">' + o + '</option>').join('');
   refBody(
-    '<div class="ref-card"><div style="font-size:15px;font-weight:700;margin-bottom:6px">🌱 我想成為推薦人</div>' +
-    '<div class="ref-note">把喵老師的好湯好肉分享給朋友！朋友用您的推薦碼購物滿 $' + referral.min.toLocaleString() + '，就能獲得好友推薦禮；訂單完成付款後，您也會獲得回饋金。</div></div>' +
+    '<div class="ref-card"><div style="font-size:15px;font-weight:700;margin-bottom:8px">🌱 我想成為推薦人</div>' +
+    '<div style="font-size:14px;line-height:1.9">🎁 拿到推薦碼的朋友，購物滿額還有專屬加碼禮物！<br>🤝 成為推薦人，享 <b>8%～12%</b> 回饋金，還有年中加碼回饋。<br>📧 填寫資料後，詳細說明會直接寄到您的 Email。</div></div>' +
     (missing ? '<div class="ref-card ref-note">我們還沒有您的完整資料，請補齊下方標 <span class="req">*</span> 的欄位（含英文名字）。</div>' : '') +
     '<div class="ref-card">' +
       '<div class="form-group"><label class="form-label">英文名字 <span class="req">*</span></label>' +
@@ -2124,18 +2122,16 @@ function renderRefApply() {
       refProfileField('ref-email', 'Email', mb.email, 'email', '例如 name@gmail.com') +
       '<div class="form-group"><label class="form-label">我的推薦方式 <span class="req">*</span></label>' +
         '<select class="form-input" id="ref-method"><option value="">請選擇</option>' + sel + '</select></div>' +
-      '<div class="form-group"><label class="form-label">說明 <span class="req">*</span>（請提供相關連結或文字說明）</label>' +
+      '<div class="form-group"><label class="form-label">說明（選填，可提供相關連結或文字說明）</label>' +
         '<textarea class="form-input" id="ref-method-detail" rows="3" placeholder="例如：社群粉專連結、群組人數與性質"></textarea></div>' +
-      '<div class="form-group"><label class="form-label">目前從事工作 <span class="req">*</span></label>' +
+      '<div class="form-group"><label class="form-label">目前從事工作（選填）</label>' +
         '<input class="form-input" id="ref-job" placeholder="例如：餐飲業、教師、自由工作者"></div>' +
-      '<div class="form-group"><label class="form-label">名片 <span class="req">*</span>（請上傳一張名片照片）</label>' +
+      '<div class="form-group"><label class="form-label">名片（選填，可上傳一張名片照片）</label>' +
         '<input class="form-input" id="ref-card" type="file" accept="image/*" onchange="refCardPicked(this)">' +
         '<img id="ref-card-preview" alt="名片預覽" style="display:none;margin-top:8px;max-width:100%;border-radius:8px;border:1px solid var(--border-color)"></div>' +
-      '<div class="form-group"><label class="form-label">為什麼想成為推薦人？ <span class="req">*</span></label>' +
+      '<div class="form-group"><label class="form-label">為什麼想成為推薦人？（選填）</label>' +
         '<textarea class="form-input" id="ref-reason" rows="3"></textarea></div>' +
-      '<div class="form-group"><div style="font-size:15px;font-weight:700;color:var(--espresso);margin-bottom:4px">📜 推薦人須知、相關法規及法律條款</div>' +
-        '<div style="background:var(--cream);border-radius:10px;padding:4px 14px 14px">' + refTermsHtml() + '</div>' +
-        '<label style="display:flex;gap:8px;align-items:flex-start;margin-top:12px;font-size:13.5px;font-weight:700"><input type="checkbox" id="ref-agree" style="margin-top:4px;width:18px;height:18px">我已經閱讀並同意以上推薦人須知、相關法規及法律條款</label></div>' +
+      '<div class="ref-note" style="margin:4px 0 12px">📧 送出後，推薦人說明會寄到您的 Email，請打開信件按下「我已閱讀並同意」。</div>' +
       '<button class="btn-primary" id="ref-apply-submit" onclick="submitRefApply()">送出申請</button>' +
       '<div class="ref-msg" id="ref-apply-msg"></div>' +
     '</div>');
@@ -2178,11 +2174,6 @@ function submitRefApply() {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(pEmail)) return bad('請填寫正確的 Email');
   if (val('ref-en').replace(/[^A-Za-z]/g, '').length < 2) return bad('請填寫英文名字（至少 2 個英文字母）');
   if (!val('ref-method')) return bad('請選擇推薦方式');
-  if (!val('ref-method-detail')) return bad('請填寫推薦方式的說明或連結');
-  if (!val('ref-job')) return bad('請填寫目前從事工作');
-  if (!refCardData) return bad('請上傳一張名片照片');
-  if (!val('ref-reason')) return bad('請說明為什麼想成為推薦人');
-  if (!document.getElementById('ref-agree').checked) return bad('請先閱讀並勾選「我已經閱讀並同意」，才能送出申請');
   const btn = document.getElementById('ref-apply-submit');
   btn.disabled = true; btn.textContent = '送出中…';
   const mb = member || {};
