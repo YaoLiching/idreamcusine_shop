@@ -1632,6 +1632,17 @@ function openLineOA() {
   }
 }
 
+// 【2026/11】專用連結 ?open=referral：進購物車後直接打開推薦人專區（一樣經過 LINE 登入，會帶出 LINE 資料）
+function wantsReferralLink() {
+  try {
+    const q = new URLSearchParams(location.search);
+    if (q.get('open') === 'referral') return true;
+    const st = q.get('liff.state');
+    return !!(st && /open=referral/.test(decodeURIComponent(st)));
+  } catch (e) { return false; }
+}
+let openReferralOnLaunch = wantsReferralLink();
+
 // ── LIFF INIT ──
 const LIFF_ID = '2010286983-KluFiWkX';
 
@@ -1742,6 +1753,7 @@ function launchApp() {
   document.getElementById('m-addr').textContent   = member.address;
   fillSelf();
   fetchCampaignStatus();
+  if (openReferralOnLaunch) { openReferralOnLaunch = false; setTimeout(openReferral, 300); }
 }
 
 function fillSelf() {
