@@ -1640,7 +1640,7 @@ const SHARE50_MODE = (function () {
     return q.get('page') === 'share50' || /share50/.test(st);
   } catch (e) { return false; }
 })();
-const SHARE50_IMG = 'https://yaoliching.github.io/idreamcusine_shop/plan50final.jpg';
+const SHARE50_IMG = 'https://yaoliching.github.io/idreamcusine_shop/plan50.jpg?v=1128';
 const SHARE50_RATIO = '819:1456';
 const SHARE50_OA = 'https://line.me/R/oaMessage/%40413vjwfv/?%E6%88%91%E5%9C%A8';
 function showShare50() {
@@ -1651,7 +1651,7 @@ function showShare50() {
   d.innerHTML = '<div style="max-width:480px;margin:0 auto;padding:16px 16px 130px">' +
     '<div style="font-size:19px;font-weight:700;text-align:center;margin:4px 0 10px;color:#3d2817">📣 分享「喵老師50大計畫」給朋友</div>' +
     '<div style="font-size:14px;line-height:1.7;background:#fff;border:1px solid #eadcc4;border-radius:12px;padding:10px 14px;margin-bottom:12px;color:#3d2817">按下方綠色按鈕 → 選擇朋友或群組 → 傳送。<br>朋友收到的圖卡，<b>點圖就會跳到 LINE 官方帳號</b>，對話框自動出現「我在」。</div>' +
-    '<img src="' + SHARE50_IMG + '?v=' + Date.now() + '" style="width:100%;display:block;border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,.12)"></div>' +
+    '<img src="' + SHARE50_IMG + '&t=' + Date.now() + '" style="width:100%;display:block;border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,.12)"></div>' +
     '<div style="position:fixed;left:0;right:0;bottom:0;background:rgba(251,246,236,.97);padding:12px 16px calc(12px + env(safe-area-inset-bottom));border-top:1px solid #eadcc4">' +
     '<button type="button" id="share50Btn" onclick="share50Send()" style="display:block;width:100%;max-width:448px;margin:0 auto;border:none;border-radius:30px;padding:15px;font-size:18px;font-weight:700;color:#fff;background:#06c755">分享給 LINE 朋友</button>' +
     '<div id="share50Msg" style="text-align:center;font-size:14px;margin-top:8px;min-height:20px"></div></div>';
