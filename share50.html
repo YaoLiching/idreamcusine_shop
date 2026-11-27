@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>分享｜喵老師50大計畫</title>
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+<style>
+  :root { --green: #3b4a2f; --gold: #c9a45c; --cream: #fbf6ec; --text: #3d2817; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--cream); color: var(--text); font-family: -apple-system, "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif; }
+  .wrap { max-width: 480px; margin: 0 auto; padding: 16px 16px 120px; }
+  h1 { font-size: 19px; text-align: center; margin: 6px 0 12px; }
+  .tip { font-size: 14px; line-height: 1.7; background: #fff; border: 1px solid #eadcc4; border-radius: 12px; padding: 10px 14px; margin-bottom: 12px; }
+  img.poster { width: 100%; border-radius: 12px; display: block; box-shadow: 0 4px 16px rgba(0,0,0,.12); }
+  .bar { position: fixed; left: 0; right: 0; bottom: 0; background: rgba(251,246,236,.96); padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid #eadcc4; }
+  .btn { display: block; width: 100%; max-width: 448px; margin: 0 auto; border: none; border-radius: 30px; padding: 15px; font-size: 18px; font-weight: 700; color: #fff; background: #06c755; cursor: pointer; font-family: inherit; }
+  .btn:disabled { opacity: .6; }
+  .msg { text-align: center; font-size: 14px; margin-top: 8px; min-height: 20px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>📣 分享「喵老師50大計畫」給朋友</h1>
+  <div class="tip">按下方綠色按鈕 → 選擇要傳送的朋友或群組 → 傳送。<br>朋友收到的圖卡，<b>點圖就會跳到 LINE 官方帳號</b>，對話框自動出現「我在」。</div>
+  <img class="poster" src="plan50.jpg" alt="五十人生大計畫">
+</div>
+<div class="bar">
+  <button class="btn" id="shareBtn" onclick="share()" disabled>載入中…</button>
+  <div class="msg" id="msg"></div>
+</div>
+<script>
+const LIFF_ID = '2010286983-KluFiWkX';
+const OA_LINK = 'https://line.me/R/oaMessage/%40413vjwfv/?%E6%88%91%E5%9C%A8';
+const IMG_URL = 'https://yaoliching.github.io/idreamcusine_shop/plan50.jpg';
+const btn = document.getElementById('shareBtn');
+const msg = document.getElementById('msg');
+function say(t, color) { msg.style.color = color || 'var(--text)'; msg.textContent = t; }
+
+function card() {
+  return {
+    type: 'flex',
+    altText: '喵老師50大計畫｜點圖解鎖',
+    contents: {
+      type: 'bubble',
+      size: 'giga',
+      hero: { type: 'image', url: IMG_URL, size: 'full', aspectRatio: '2:3', aspectMode: 'cover',
+              action: { type: 'uri', label: '解鎖喵老師50大計畫', uri: OA_LINK } },
+      footer: { type: 'box', layout: 'vertical', paddingAll: '12px', contents: [
+        { type: 'button', style: 'primary', color: '#3b4a2f', height: 'md',
+          action: { type: 'uri', label: '點這解鎖喵老師50大計畫', uri: OA_LINK } }
+      ] }
+    }
+  };
+}
+
+async function share() {
+  if (!liff.isApiAvailable('shareTargetPicker')) {
+    say('這個分享功能還沒開啟，請聯繫管理員。', '#c0392b'); return;
+  }
+  btn.disabled = true;
+  try {
+    const res = await liff.shareTargetPicker([card()]);
+    say(res ? '✅ 已傳送！可以再分享給其他朋友。' : '已取消，沒有傳送。', res ? '#2e7d32' : '');
+  } catch (e) {
+    say('傳送失敗：' + (e.message || e), '#c0392b');
+  }
+  btn.disabled = false;
+}
+
+liff.init({ liffId: LIFF_ID }).then(() => {
+  if (!liff.isLoggedIn()) { liff.login({ redirectUri: location.href }); return; }
+  btn.disabled = false; btn.textContent = '分享給 LINE 朋友';
+}).catch(e => { btn.textContent = '請在 LINE 裡打開'; say('載入失敗：' + (e.message || e), '#c0392b'); });
+</script>
+</body>
+</html>
