@@ -1632,6 +1632,15 @@ function openLineOA() {
   }
 }
 
+// 【2026/11】分享頁：LIFF 連結帶 /share50.html 或 ?page=share50 時，直接轉到分享頁（不停在購物車首頁）
+(function () {
+  try {
+    const q = new URLSearchParams(location.search);
+    const st = decodeURIComponent(q.get('liff.state') || '');
+    if (q.get('page') === 'share50' || /share50/.test(st)) location.replace(location.pathname.replace(/[^/]*$/, '') + 'share50.html');
+  } catch (e) {}
+})();
+
 // 【2026/11】專用連結 ?open=referral：進購物車後直接打開推薦人專區（一樣經過 LINE 登入，會帶出 LINE 資料）
 function wantsReferralLink() {
   try {
