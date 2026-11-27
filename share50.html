@@ -46,10 +46,17 @@ function card() {
       size: 'giga',
       hero: { type: 'image', url: IMG_URL, size: 'full', aspectRatio: '2:3', aspectMode: 'cover',
               action: { type: 'uri', label: '解鎖喵老師50大計畫', uri: OA_LINK } },
-      footer: { type: 'box', layout: 'vertical', paddingAll: '12px', contents: [
-        { type: 'button', style: 'primary', color: '#3b4a2f', height: 'md',
-          action: { type: 'uri', label: '點選這邊看我的大計畫', uri: OA_LINK } }
-      ] }
+      footer: { type: 'box', layout: 'vertical', paddingAll: '16px', spacing: 'sm', backgroundColor: '#7a1f1f',
+        action: { type: 'uri', label: '立即卡位', uri: OA_LINK },
+        contents: [
+          { type: 'text', text: '🎉 12/7．12/19 食藝餐桌', weight: 'bold', size: 'xl', color: '#ffd88a', align: 'center', wrap: true },
+          { type: 'text', text: '不只品嘗美食，帶回食藝禮籃，更有好禮！', size: 'sm', color: '#ffffff', align: 'center', wrap: true },
+          { type: 'text', text: '現金 500 元、紅酒、頂級肉品等', size: 'md', weight: 'bold', color: '#ffffff', align: 'center', wrap: true },
+          { type: 'text', text: '歡迎贊助商與斗內！', size: 'sm', color: '#ffe9c4', align: 'center', wrap: true },
+          { type: 'box', layout: 'vertical', backgroundColor: '#ffd54f', cornerRadius: '20px', paddingAll: '10px', margin: 'md', contents: [
+            { type: 'text', text: '🔥 兩人同行或雙場報名享 9 折，立即卡位！', size: 'sm', weight: 'bold', color: '#7a1f1f', align: 'center', wrap: true }
+          ] }
+        ] }
     }
   };
 }
