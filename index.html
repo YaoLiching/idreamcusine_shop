@@ -1669,7 +1669,11 @@ async function share50Send() {
       type: 'flex', altText: '喵老師50大計畫｜點圖解鎖',
       contents: { type: 'bubble', size: 'giga',
         hero: { type: 'image', url: SHARE50_IMG, size: 'full', aspectRatio: SHARE50_RATIO, aspectMode: 'cover',
-                action: { type: 'uri', label: '解鎖喵老師50大計畫', uri: SHARE50_OA } } }
+                action: { type: 'uri', label: '解鎖喵老師50大計畫', uri: SHARE50_OA } },
+        footer: { type: 'box', layout: 'vertical', paddingAll: '12px', contents: [
+          { type: 'button', style: 'primary', color: '#3b4a2f', height: 'md',
+            action: { type: 'uri', label: '💌 我為你留了一個座位，點我打開邀請', uri: SHARE50_OA } }
+        ] } }
     }]);
     say(res ? '✅ 已傳送！可以再分享給其他朋友。' : '已取消，沒有傳送。', res ? '#2e7d32' : '');
   } catch (e) { say('傳送失敗：' + (e.message || e), '#c0392b'); }
