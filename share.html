@@ -243,7 +243,12 @@ function shareAfterInit() {
 // LIFF 初始化：在 LINE 裡會自動登入；在瀏覽器打開時先登入，登入後回到這一頁
 const LIFF_ID = '2010286983-KluFiWkX';
 liff.init({ liffId: LIFF_ID }).then(() => {
-  if (!liff.isLoggedIn()) liff.login({ redirectUri: location.href });
+  if (liff.isLoggedIn()) { try { sessionStorage.removeItem('s50_login_try'); } catch (e) {} return; }
+  let tried = false; try { tried = !!sessionStorage.getItem('s50_login_try'); sessionStorage.setItem('s50_login_try', '1'); } catch (e) {}
+  if (!tried) { liff.login({ redirectUri: location.origin + location.pathname + '?page=' + (INVITE50_MODE ? 'invite50' : 'share50') }); return; }
+  // 已經試過一次登入還是沒登入：停下來，不再來回跳
+  const m = document.getElementById(INVITE50_MODE ? 'invite50Msg' : 'share50Msg');
+  if (m) { m.style.color = '#c0392b'; m.textContent = '登入沒有完成，請在手機 LINE 聊天室裡點連結打開。'; }
 }).catch(e => console.error('LIFF init failed:', e));
 </script>
 </body>

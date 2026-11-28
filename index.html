@@ -623,7 +623,7 @@ body {
 <body>
 <script>
 // 【2026/11/28】分享連結（?page=share50 / invite50）直接轉到獨立的 share.html，不載入購物車
-(function(){try{var q=new URLSearchParams(location.search);var all=(q.get('page')||'')+' '+decodeURIComponent(q.get('liff.state')||'');var t=/invite50/.test(all)?'invite50':(/share50/.test(all)?'share50':'');if(t){location.replace(location.pathname.replace(/[^\/]*$/,'')+'share.html?page='+t);}}catch(e){}})();
+(function(){try{var q=new URLSearchParams(location.search);var all=(q.get('page')||'')+' '+decodeURIComponent(q.get('liff.state')||'');var t=/invite50/.test(all)?'invite50':(/share50/.test(all)?'share50':'');if(t){q.delete('liff.state');q.set('page',t);location.replace(location.pathname.replace(/[^\/]*$/,'')+'share.html?'+q.toString()+location.hash);}}catch(e){}})(); // 保留 # 後面的 LINE 登入資料，避免來回跳
 </script>
 
 <!-- LOADING -->
