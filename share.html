@@ -127,7 +127,7 @@ function showInvite50() {
 
       '<div style="' + label + '">朋友會收到（預覽）</div>' +
       '<div style="background:' + C.bg + ';border:1px solid ' + C.line + ';border-radius:16px;padding:18px;box-shadow:0 4px 16px rgba(0,0,0,.08)">' +
-        '<div style="font-size:19px;font-weight:700;color:' + C.green + '">一封給我的好朋友的邀請函</div>' +
+        '<div style="font-size:19px;font-weight:700;color:' + C.green + '">' + (CLASSMATE50_MODE ? '邀請函' : '一封給我的好朋友的邀請函') + '</div>' +
         '<div style="height:1px;background:' + C.line + ';margin:12px 0"></div>' +
         '<div id="s50PvGreet" style="font-weight:700;font-size:15px"></div>' +
         '<div id="s50PvMsg" style="font-size:14px;line-height:1.8;white-space:pre-wrap;margin-top:6px"></div>' +
@@ -170,7 +170,7 @@ function invite50Messages(v) {
       type: 'bubble', size: 'mega',
       styles: { body: { backgroundColor: '#fbf6ec' }, footer: { backgroundColor: '#fbf6ec' } },
       body: { type: 'box', layout: 'vertical', paddingAll: '20px', contents: [
-        { type: 'text', text: '一封給我的好朋友的邀請函', size: 'lg', weight: 'bold', color: '#3b4a2f', wrap: true },
+        { type: 'text', text: CLASSMATE50_MODE ? '邀請函' : '一封給我的好朋友的邀請函', size: 'lg', weight: 'bold', color: '#3b4a2f', wrap: true },
         { type: 'separator', color: '#eadcc4', margin: 'lg' },
         { type: 'text', text: v.greeting, size: 'md', weight: 'bold', color: '#3d2817', margin: 'lg', wrap: true },
         { type: 'text', text: v.msg, size: 'sm', color: '#3d2817', wrap: true, lineSpacing: '6px', margin: 'md' },
