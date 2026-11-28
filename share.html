@@ -69,9 +69,9 @@ const INVITE50_MODE = (function () {
 })();
 // 【2026/11/28】好朋友邀請版（?page=invite50）：固定「親愛的朋友」＋一段溫馨邀請話，署名自動帶入 LINE 名稱
 const SHARE50_DEFAULT_MSG =
-  '今年我要滿五十歲了。回頭看這一路，從實驗室、講台到廚房，每個重要的時刻，都有你在。\n\n' +
-  '12/7 和 12/19，我在 WAGA 準備了兩張餐桌，請來一起得獎的廚師親自下廚，還有花藝老師帶大家做一份可以帶回家的禮籃。我想把這些年的感謝，好好端到你面前。\n\n' +
-  '位子不多，其中一個，我很想留給你。如果那天方便，真心希望你能來，陪我一起過這個五十歲。';
+  '在開票夜，我也要大聲宣布：我當選了！我也要幫自己辦個人生五十慶功宴。回首職涯從實驗室、講台到廚房，每個重要的時刻，因為有你（妳）的陪伴，讓我的人生更精彩。\n\n' +
+  '12/7 和 12/19，我準備了兩張餐桌，我與其他得到永續料理大獎的廚師們將親自下廚，還請花藝師設計帶領大家，把桌上精美布置變成價值超過 $1,500 的禮籃。此外，還有摸獎，人人有禮。\n\n' +
+  '人生能有幾個 50？邀請你一起見證我的人生五十，看見我的努力。位子不多，其中一個，我很想留給你。';
 const SHARE50_MAXLEN = 300;
 function s50Get(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : v; } catch (e) { return d; } }
 function s50Set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
@@ -90,7 +90,7 @@ function invite50Preview() {
   document.getElementById('s50PvSign').textContent = '—— ' + v.sender + ' 敬邀';
   const t = document.getElementById('s50Text');
   document.getElementById('s50Count').textContent = t.value.length + ' / ' + SHARE50_MAXLEN;
-  s50Set('invite50_msg', t.value);
+  s50Set('invite50_msg_v2', t.value);
   s50Set('invite50_from', document.getElementById('s50From').value);
 }
 
@@ -132,9 +132,8 @@ function showInvite50() {
         '<div id="s50PvMsg" style="font-size:14px;line-height:1.8;white-space:pre-wrap;margin-top:6px"></div>' +
         '<div id="s50PvSign" style="text-align:right;font-size:14px;color:#8a6d3b;margin-top:12px"></div>' +
         '<div style="background:#fff;border:1px solid ' + C.line + ';border-radius:10px;padding:10px 12px;margin-top:12px;font-size:12px;line-height:1.8">' +
-          '12/7（一）18:00｜人生回顧暨感恩餐會<br>12/19（六）12:00｜50歲生日歡慶派對<br>' +
-          '<span style="color:#8a6d3b">WAGA 最美餐具｜台北市信義區松德路65號12樓</span></div>' +
-        '<div style="background:' + C.green + ';color:#fff;text-align:center;border-radius:8px;padding:9px;margin-top:12px;font-size:14px;font-weight:700">💌 我想參加，打開邀請</div>' +
+          '<span style="color:#8a6d3b">📍 WAGA 最美餐具｜台北市信義區松德路65號12樓</span></div>' +
+        '<div style="background:' + C.green + ';color:#fff;text-align:center;border-radius:8px;padding:9px;margin-top:12px;font-size:14px;font-weight:700">往下滑，或點我看邀請函與人生50計畫</div>' +
       '</div>' +
       '<img src="' + SHARE50_IMG + '&t=' + Date.now() + '" style="width:100%;display:block;border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,.12);margin-top:12px">' +
       '<div style="font-size:12px;color:#8a7a62;text-align:center;margin-top:6px">邀請函之後會接著送出這張海報，點圖會開啟 LINE 官方帳號</div>' +
@@ -145,7 +144,7 @@ function showInvite50() {
     '</div>';
   document.body.appendChild(d);
 
-  document.getElementById('s50Text').value = s50Get('invite50_msg', SHARE50_DEFAULT_MSG);
+  document.getElementById('s50Text').value = s50Get('invite50_msg_v2', SHARE50_DEFAULT_MSG);
   document.getElementById('s50From').value = s50Get('invite50_from', '');
   ['s50Text', 's50From'].forEach(id => document.getElementById(id).addEventListener('input', invite50Preview));
   invite50Preview();
@@ -178,14 +177,12 @@ function invite50Messages(v) {
         { type: 'text', text: '—— ' + v.sender + ' 敬邀', size: 'sm', color: '#8a6d3b', align: 'end', margin: 'lg', wrap: true },
         { type: 'box', layout: 'vertical', margin: 'lg', paddingAll: '12px', spacing: 'xs', cornerRadius: '10px',
           backgroundColor: '#ffffff', borderColor: '#eadcc4', borderWidth: '1px', contents: [
-            { type: 'text', text: '12/7（一）18:00｜人生回顧暨感恩餐會', size: 'xs', color: '#3d2817', wrap: true },
-            { type: 'text', text: '12/19（六）12:00｜50歲生日歡慶派對', size: 'xs', color: '#3d2817', wrap: true },
-            { type: 'text', text: 'WAGA 最美餐具｜台北市信義區松德路65號12樓', size: 'xs', color: '#8a6d3b', wrap: true }
+            { type: 'text', text: '📍 WAGA 最美餐具｜台北市信義區松德路65號12樓', size: 'xs', color: '#8a6d3b', wrap: true }
         ] }
       ] },
       footer: { type: 'box', layout: 'vertical', paddingAll: '12px', contents: [
         { type: 'button', style: 'primary', color: '#3b4a2f', height: 'sm',
-          action: { type: 'uri', label: '💌 我想參加，打開邀請', uri: SHARE50_OA } }
+          action: { type: 'uri', label: '往下滑，或點我看邀請函與人生50計畫', uri: SHARE50_OA } }
       ] }
     }
   };
