@@ -621,6 +621,242 @@ body {
 <script src="https://static.line-scdn.net/liff/edge/versions/2.22.3/sdk.js"></script>
 </head>
 <body>
+<script>
+// 【2026/11/28】分享頁程式放在最前面：一打開就先顯示海報，不用等購物車整頁載完
+// 【2026/11】分享模式：LIFF 連結帶 ?page=share50 時，在購物車頁面上直接覆蓋分享畫面（不跳頁，避免 LIFF 來回轉址）
+const SHARE50_MODE = (function () {
+  try {
+    const q = new URLSearchParams(location.search);
+    const st = decodeURIComponent(q.get('liff.state') || '');
+    return q.get('page') === 'share50' || /share50/.test(st);
+  } catch (e) { return false; }
+})();
+const SHARE50_IMG = 'https://yaoliching.github.io/idreamcusine_shop/plan50.jpg?v=1128';
+const SHARE50_RATIO = '819:1456';
+const SHARE50_OA = 'https://line.me/R/oaMessage/%40413vjwfv/?%E6%88%91%E5%9C%A8';
+function showShare50() {
+  if (document.getElementById('share50Overlay')) return;
+  const d = document.createElement('div');
+  d.id = 'share50Overlay';
+  d.style.cssText = 'position:fixed;inset:0;z-index:2147483000;background:#fbf6ec;overflow:auto;-webkit-overflow-scrolling:touch';
+  d.innerHTML = '<div style="max-width:480px;margin:0 auto;padding:10px 12px 96px;text-align:center">' +
+    '<div style="font-size:17px;font-weight:700;margin:2px 0 4px;color:#3d2817">📣 分享「喵老師50大計畫」給朋友</div>' +
+    '<div style="font-size:13px;line-height:1.5;margin-bottom:8px;color:#6b5a45">按下方綠色按鈕 → 選朋友或群組 → 傳送</div>' +
+    '<img src="' + SHARE50_IMG + '&t=' + Date.now() + '" style="display:block;margin:0 auto;width:auto;max-width:100%;max-height:calc(100vh - 190px);max-height:calc(100dvh - 190px);border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,.12)"></div>' +
+    '<div style="position:fixed;left:0;right:0;bottom:0;background:rgba(251,246,236,.97);padding:12px 16px calc(12px + env(safe-area-inset-bottom));border-top:1px solid #eadcc4">' +
+    '<button type="button" id="share50Btn" onclick="share50Send()" style="display:block;width:100%;max-width:448px;margin:0 auto;border:none;border-radius:30px;padding:15px;font-size:18px;font-weight:700;color:#fff;background:#06c755">分享給 LINE 朋友</button>' +
+    '<div id="share50Msg" style="text-align:center;font-size:14px;margin-top:8px;min-height:20px"></div></div>';
+  document.body.appendChild(d);
+}
+async function share50Send() {
+  const btn = document.getElementById('share50Btn'), msg = document.getElementById('share50Msg');
+  const say = (s, c) => { msg.style.color = c || '#3d2817'; msg.textContent = s; };
+  btn.disabled = true;
+  try {
+    await liff.ready;
+    if (!liff.isLoggedIn()) { liff.login({ redirectUri: location.href }); return; }
+    if (!liff.isApiAvailable('shareTargetPicker')) { say('請用手機在 LINE 裡打開這個連結再分享。', '#c0392b'); return; }
+    const res = await liff.shareTargetPicker([{
+      type: 'flex', altText: '喵老師50大計畫｜點圖解鎖',
+      contents: { type: 'bubble', size: 'mega',
+        hero: { type: 'image', url: SHARE50_IMG, size: 'full', aspectRatio: SHARE50_RATIO, aspectMode: 'cover',
+                action: { type: 'uri', label: '解鎖喵老師50大計畫', uri: SHARE50_OA } },
+        footer: { type: 'box', layout: 'vertical', paddingAll: '12px', contents: [
+          { type: 'button', style: 'primary', color: '#3b4a2f', height: 'md',
+            action: { type: 'uri', label: '💌 我為你留了一個座位，點我打開邀請', uri: SHARE50_OA } }
+        ] } }
+    }]);
+    say(res ? '✅ 已傳送！可以再分享給其他朋友。' : '已取消，沒有傳送。', res ? '#2e7d32' : '');
+  } catch (e) { say('傳送失敗：' + (e.message || e), '#c0392b'); }
+  btn.disabled = false;
+}
+if (SHARE50_MODE) {
+  if (document.body) showShare50(); else document.addEventListener('DOMContentLoaded', showShare50);
+}
+
+const INVITE50_MODE = (function () {
+  try {
+    const q = new URLSearchParams(location.search);
+    const st = decodeURIComponent(q.get('liff.state') || '');
+    return q.get('page') === 'invite50' || /invite50/.test(st);
+  } catch (e) { return false; }
+})();
+// 【2026/11/28】好朋友邀請版（?page=invite50）：固定「親愛的朋友」＋一段溫馨邀請話，署名自動帶入 LINE 名稱
+const SHARE50_DEFAULT_MSG =
+  '今年我要滿五十歲了。回頭看這一路，從實驗室、講台到廚房，每個重要的時刻，都有你在。\n\n' +
+  '12/7 和 12/19，我在 WAGA 準備了兩張餐桌，請來一起得獎的廚師親自下廚，還有花藝老師帶大家做一份可以帶回家的禮籃。我想把這些年的感謝，好好端到你面前。\n\n' +
+  '位子不多，其中一個，我很想留給你。如果那天方便，真心希望你能來，陪我一起過這個五十歲。';
+const SHARE50_MAXLEN = 300;
+function s50Get(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : v; } catch (e) { return d; } }
+function s50Set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+
+function invite50Values() {
+  const sender = (document.getElementById('s50From').value || '').trim() || '喵老師';
+  let msg = (document.getElementById('s50Text').value || '').trim();
+  if (!msg) msg = SHARE50_DEFAULT_MSG;
+  return { sender, msg, greeting: '親愛的朋友：' };
+}
+
+function invite50Preview() {
+  const v = invite50Values();
+  document.getElementById('s50PvGreet').textContent = v.greeting;
+  document.getElementById('s50PvMsg').textContent = v.msg;
+  document.getElementById('s50PvSign').textContent = '—— ' + v.sender + ' 敬邀';
+  const t = document.getElementById('s50Text');
+  document.getElementById('s50Count').textContent = t.value.length + ' / ' + SHARE50_MAXLEN;
+  s50Set('invite50_msg', t.value);
+  s50Set('invite50_from', document.getElementById('s50From').value);
+}
+
+function invite50Reset() {
+  document.getElementById('s50Text').value = SHARE50_DEFAULT_MSG;
+  invite50Preview();
+}
+
+function showInvite50() {
+  if (document.getElementById('invite50Overlay')) return;
+  const C = { bg: '#fbf6ec', ink: '#3d2817', green: '#3b4a2f', gold: '#a8864a', line: '#eadcc4' };
+  const field = 'display:block;width:100%;box-sizing:border-box;border:1px solid ' + C.line + ';border-radius:10px;padding:10px 12px;font-size:16px;color:' + C.ink + ';background:#fff;font-family:inherit';
+  const label = 'display:block;font-size:14px;font-weight:700;color:' + C.green + ';margin:14px 0 6px';
+  const d = document.createElement('div');
+  d.id = 'invite50Overlay';
+  d.style.cssText = 'position:fixed;inset:0;z-index:2147483000;background:' + C.bg + ';overflow:auto;-webkit-overflow-scrolling:touch;color:' + C.ink;
+  d.innerHTML =
+    '<div style="max-width:480px;margin:0 auto;padding:18px 16px 150px">' +
+      '<div style="text-align:center;font-size:12px;letter-spacing:3px;color:' + C.gold + '">食藝餐桌・五十而豐</div>' +
+      '<div style="text-align:center;font-size:21px;font-weight:700;color:' + C.green + ';margin:4px 0 12px">💌 邀請好朋友</div>' +
+      '<div style="font-size:14px;line-height:1.7;background:#fff;border:1px solid ' + C.line + ';border-radius:12px;padding:10px 14px">' +
+        '① 想說的話可以照自己的口吻改<br>② 按下方綠色按鈕 → 選朋友（可一次選多位）→ 傳送</div>' +
+
+
+      '<label style="' + label + '" for="s50Text">想對他說的話</label>' +
+      '<textarea id="s50Text" rows="8" maxlength="' + SHARE50_MAXLEN + '" style="' + field + ';line-height:1.7;resize:vertical"></textarea>' +
+      '<div style="display:flex;justify-content:space-between;font-size:12px;color:#8a7a62;margin-top:4px">' +
+        '<span id="s50Count"></span><a href="javascript:void(0)" onclick="invite50Reset()" style="color:' + C.gold + '">恢復預設文字</a></div>' +
+
+      '<label style="' + label + '" for="s50From">署名</label>' +
+      '<input id="s50From" maxlength="20" placeholder="你的名字" style="' + field + '">' +
+
+      '<div style="' + label + '">朋友會收到（預覽）</div>' +
+      '<div style="background:' + C.bg + ';border:1px solid ' + C.line + ';border-radius:16px;padding:18px;box-shadow:0 4px 16px rgba(0,0,0,.08)">' +
+        '<div style="font-size:11px;font-weight:700;color:' + C.gold + '">食藝餐桌・五十而豐</div>' +
+        '<div style="font-size:19px;font-weight:700;color:' + C.green + ';margin-top:2px">一封給你的邀請</div>' +
+        '<div style="height:1px;background:' + C.line + ';margin:12px 0"></div>' +
+        '<div id="s50PvGreet" style="font-weight:700;font-size:15px"></div>' +
+        '<div id="s50PvMsg" style="font-size:14px;line-height:1.8;white-space:pre-wrap;margin-top:6px"></div>' +
+        '<div id="s50PvSign" style="text-align:right;font-size:14px;color:#8a6d3b;margin-top:12px"></div>' +
+        '<div style="background:#fff;border:1px solid ' + C.line + ';border-radius:10px;padding:10px 12px;margin-top:12px;font-size:12px;line-height:1.8">' +
+          '12/7（一）18:00｜人生回顧暨感恩餐會<br>12/19（六）12:00｜50歲生日歡慶派對<br>' +
+          '<span style="color:#8a6d3b">WAGA 最美餐具｜台北市信義區松德路65號12樓</span></div>' +
+        '<div style="background:' + C.green + ';color:#fff;text-align:center;border-radius:8px;padding:9px;margin-top:12px;font-size:14px;font-weight:700">💌 我想參加，打開邀請</div>' +
+      '</div>' +
+      '<img src="' + SHARE50_IMG + '&t=' + Date.now() + '" style="width:100%;display:block;border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,.12);margin-top:12px">' +
+      '<div style="font-size:12px;color:#8a7a62;text-align:center;margin-top:6px">邀請函之後會接著送出這張海報，點圖會開啟 LINE 官方帳號</div>' +
+    '</div>' +
+    '<div style="position:fixed;left:0;right:0;bottom:0;background:rgba(251,246,236,.97);padding:12px 16px calc(12px + env(safe-area-inset-bottom));border-top:1px solid ' + C.line + '">' +
+      '<button type="button" id="invite50Btn" onclick="invite50Send()" style="display:block;width:100%;max-width:448px;margin:0 auto;border:none;border-radius:30px;padding:15px;font-size:18px;font-weight:700;color:#fff;background:#06c755">傳送邀請給 LINE 朋友</button>' +
+      '<div id="invite50Msg" style="text-align:center;font-size:14px;margin-top:8px;min-height:20px"></div>' +
+    '</div>';
+  document.body.appendChild(d);
+
+  document.getElementById('s50Text').value = s50Get('invite50_msg', SHARE50_DEFAULT_MSG);
+  document.getElementById('s50From').value = s50Get('invite50_from', '');
+  ['s50Text', 's50From'].forEach(id => document.getElementById(id).addEventListener('input', invite50Preview));
+  invite50Preview();
+
+  // 登入後自動帶入 LINE 名稱當署名（使用者已自己改過就不覆蓋）
+  (async () => {
+    try {
+      await liff.ready;
+      if (!liff.isLoggedIn()) return;
+      const p = await liff.getProfile();
+      const f = document.getElementById('s50From');
+      if (f && !f.value.trim() && p && p.displayName) { f.value = p.displayName; invite50Preview(); }
+    } catch (e) {}
+  })();
+}
+
+function invite50Messages(v) {
+  const letter = {
+    type: 'flex',
+    altText: v.sender + ' 邀請你：食藝餐桌・五十而豐',
+    contents: {
+      type: 'bubble', size: 'mega',
+      styles: { body: { backgroundColor: '#fbf6ec' }, footer: { backgroundColor: '#fbf6ec' } },
+      body: { type: 'box', layout: 'vertical', paddingAll: '20px', contents: [
+        { type: 'text', text: '食藝餐桌・五十而豐', size: 'xs', weight: 'bold', color: '#a8864a' },
+        { type: 'text', text: '一封給你的邀請', size: 'xl', weight: 'bold', color: '#3b4a2f', margin: 'xs' },
+        { type: 'separator', color: '#eadcc4', margin: 'lg' },
+        { type: 'text', text: v.greeting, size: 'md', weight: 'bold', color: '#3d2817', margin: 'lg', wrap: true },
+        { type: 'text', text: v.msg, size: 'sm', color: '#3d2817', wrap: true, lineSpacing: '6px', margin: 'md' },
+        { type: 'text', text: '—— ' + v.sender + ' 敬邀', size: 'sm', color: '#8a6d3b', align: 'end', margin: 'lg', wrap: true },
+        { type: 'box', layout: 'vertical', margin: 'lg', paddingAll: '12px', spacing: 'xs', cornerRadius: '10px',
+          backgroundColor: '#ffffff', borderColor: '#eadcc4', borderWidth: '1px', contents: [
+            { type: 'text', text: '12/7（一）18:00｜人生回顧暨感恩餐會', size: 'xs', color: '#3d2817', wrap: true },
+            { type: 'text', text: '12/19（六）12:00｜50歲生日歡慶派對', size: 'xs', color: '#3d2817', wrap: true },
+            { type: 'text', text: 'WAGA 最美餐具｜台北市信義區松德路65號12樓', size: 'xs', color: '#8a6d3b', wrap: true }
+        ] }
+      ] },
+      footer: { type: 'box', layout: 'vertical', paddingAll: '12px', contents: [
+        { type: 'button', style: 'primary', color: '#3b4a2f', height: 'sm',
+          action: { type: 'uri', label: '💌 我想參加，打開邀請', uri: SHARE50_OA } }
+      ] }
+    }
+  };
+  const poster = {
+    type: 'flex', altText: '喵老師五十人生大計畫｜點圖看完整邀請',
+    contents: { type: 'bubble', size: 'mega',
+      hero: { type: 'image', url: SHARE50_IMG, size: 'full', aspectRatio: SHARE50_RATIO, aspectMode: 'cover',
+              action: { type: 'uri', label: '解鎖喵老師50大計畫', uri: SHARE50_OA } },
+      footer: { type: 'box', layout: 'vertical', paddingAll: '12px', contents: [
+        { type: 'button', style: 'primary', color: '#3b4a2f', height: 'md',
+          action: { type: 'uri', label: '💌 我為你留了一個座位，點我打開邀請', uri: SHARE50_OA } }
+      ] } }
+  };
+  return [letter, poster];
+}
+
+async function invite50Send() {
+  const btn = document.getElementById('invite50Btn'), msg = document.getElementById('invite50Msg');
+  const say = (s, c) => { msg.style.color = c || '#3d2817'; msg.textContent = s; };
+  btn.disabled = true;
+  try {
+    await liff.ready;
+    if (!liff.isLoggedIn()) { liff.login({ redirectUri: location.href }); return; }
+    if (!liff.isApiAvailable('shareTargetPicker')) { say('請用手機在 LINE 裡打開這個連結再分享。', '#c0392b'); return; }
+    const v = invite50Values();
+    const res = await liff.shareTargetPicker(invite50Messages(v));
+    if (res) {
+      say('✅ 已傳送！可以再選其他朋友，再傳一次。', '#2e7d32');
+    } else {
+      say('已取消，沒有傳送。');
+    }
+  } catch (e) { say('傳送失敗：' + (e.message || e), '#c0392b'); }
+  btn.disabled = false;
+}
+
+if (INVITE50_MODE) {
+  if (document.body) showInvite50(); else document.addEventListener('DOMContentLoaded', showInvite50);
+}
+
+// 【2026/11/28】登入跳轉後補開分享頁：先記住要開哪一頁，登入回來網址若遺失 ?page= 也能打開
+(function () {
+  try {
+    if (INVITE50_MODE) sessionStorage.setItem('idream_share_page', 'invite50');
+    else if (SHARE50_MODE) sessionStorage.setItem('idream_share_page', 'share50');
+  } catch (e) {}
+})();
+function shareAfterInit() {
+  let p = '';
+  try {
+    const h = decodeURIComponent(location.href);
+    p = /invite50/.test(h) ? 'invite50' : (/share50/.test(h) ? 'share50' : (sessionStorage.getItem('idream_share_page') || ''));
+    sessionStorage.removeItem('idream_share_page');
+  } catch (e) {}
+  if (p === 'invite50') showInvite50(); else if (p === 'share50') showShare50();
+}
+
+</script>
 
 <!-- LOADING -->
 <div id="screen-loading" class="screen active">
@@ -1630,239 +1866,6 @@ function openLineOA() {
   } else {
     window.open(url, '_blank');
   }
-}
-
-// 【2026/11】分享模式：LIFF 連結帶 ?page=share50 時，在購物車頁面上直接覆蓋分享畫面（不跳頁，避免 LIFF 來回轉址）
-const SHARE50_MODE = (function () {
-  try {
-    const q = new URLSearchParams(location.search);
-    const st = decodeURIComponent(q.get('liff.state') || '');
-    return q.get('page') === 'share50' || /share50/.test(st);
-  } catch (e) { return false; }
-})();
-const SHARE50_IMG = 'https://yaoliching.github.io/idreamcusine_shop/plan50.jpg?v=1128';
-const SHARE50_RATIO = '819:1456';
-const SHARE50_OA = 'https://line.me/R/oaMessage/%40413vjwfv/?%E6%88%91%E5%9C%A8';
-function showShare50() {
-  if (document.getElementById('share50Overlay')) return;
-  const d = document.createElement('div');
-  d.id = 'share50Overlay';
-  d.style.cssText = 'position:fixed;inset:0;z-index:2147483000;background:#fbf6ec;overflow:auto;-webkit-overflow-scrolling:touch';
-  d.innerHTML = '<div style="max-width:480px;margin:0 auto;padding:10px 12px 96px;text-align:center">' +
-    '<div style="font-size:17px;font-weight:700;margin:2px 0 4px;color:#3d2817">📣 分享「喵老師50大計畫」給朋友</div>' +
-    '<div style="font-size:13px;line-height:1.5;margin-bottom:8px;color:#6b5a45">按下方綠色按鈕 → 選朋友或群組 → 傳送</div>' +
-    '<img src="' + SHARE50_IMG + '&t=' + Date.now() + '" style="display:block;margin:0 auto;width:auto;max-width:100%;max-height:calc(100vh - 190px);max-height:calc(100dvh - 190px);border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,.12)"></div>' +
-    '<div style="position:fixed;left:0;right:0;bottom:0;background:rgba(251,246,236,.97);padding:12px 16px calc(12px + env(safe-area-inset-bottom));border-top:1px solid #eadcc4">' +
-    '<button type="button" id="share50Btn" onclick="share50Send()" style="display:block;width:100%;max-width:448px;margin:0 auto;border:none;border-radius:30px;padding:15px;font-size:18px;font-weight:700;color:#fff;background:#06c755">分享給 LINE 朋友</button>' +
-    '<div id="share50Msg" style="text-align:center;font-size:14px;margin-top:8px;min-height:20px"></div></div>';
-  document.body.appendChild(d);
-}
-async function share50Send() {
-  const btn = document.getElementById('share50Btn'), msg = document.getElementById('share50Msg');
-  const say = (s, c) => { msg.style.color = c || '#3d2817'; msg.textContent = s; };
-  btn.disabled = true;
-  try {
-    await liff.ready;
-    if (!liff.isLoggedIn()) { liff.login({ redirectUri: location.href }); return; }
-    if (!liff.isApiAvailable('shareTargetPicker')) { say('請用手機在 LINE 裡打開這個連結再分享。', '#c0392b'); return; }
-    const res = await liff.shareTargetPicker([{
-      type: 'flex', altText: '喵老師50大計畫｜點圖解鎖',
-      contents: { type: 'bubble', size: 'mega',
-        hero: { type: 'image', url: SHARE50_IMG, size: 'full', aspectRatio: SHARE50_RATIO, aspectMode: 'cover',
-                action: { type: 'uri', label: '解鎖喵老師50大計畫', uri: SHARE50_OA } },
-        footer: { type: 'box', layout: 'vertical', paddingAll: '12px', contents: [
-          { type: 'button', style: 'primary', color: '#3b4a2f', height: 'md',
-            action: { type: 'uri', label: '💌 我為你留了一個座位，點我打開邀請', uri: SHARE50_OA } }
-        ] } }
-    }]);
-    say(res ? '✅ 已傳送！可以再分享給其他朋友。' : '已取消，沒有傳送。', res ? '#2e7d32' : '');
-  } catch (e) { say('傳送失敗：' + (e.message || e), '#c0392b'); }
-  btn.disabled = false;
-}
-if (SHARE50_MODE) {
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', showShare50); else showShare50();
-}
-
-const INVITE50_MODE = (function () {
-  try {
-    const q = new URLSearchParams(location.search);
-    const st = decodeURIComponent(q.get('liff.state') || '');
-    return q.get('page') === 'invite50' || /invite50/.test(st);
-  } catch (e) { return false; }
-})();
-// 【2026/11/28】好朋友邀請版（?page=invite50）：固定「親愛的朋友」＋一段溫馨邀請話，署名自動帶入 LINE 名稱
-const SHARE50_DEFAULT_MSG =
-  '今年我要滿五十歲了。回頭看這一路，從實驗室、講台到廚房，每個重要的時刻，都有你在。\n\n' +
-  '12/7 和 12/19，我在 WAGA 準備了兩張餐桌，請來一起得獎的廚師親自下廚，還有花藝老師帶大家做一份可以帶回家的禮籃。我想把這些年的感謝，好好端到你面前。\n\n' +
-  '位子不多，其中一個，我很想留給你。如果那天方便，真心希望你能來，陪我一起過這個五十歲。';
-const SHARE50_MAXLEN = 300;
-function s50Get(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : v; } catch (e) { return d; } }
-function s50Set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
-
-function invite50Values() {
-  const sender = (document.getElementById('s50From').value || '').trim() || '喵老師';
-  let msg = (document.getElementById('s50Text').value || '').trim();
-  if (!msg) msg = SHARE50_DEFAULT_MSG;
-  return { sender, msg, greeting: '親愛的朋友：' };
-}
-
-function invite50Preview() {
-  const v = invite50Values();
-  document.getElementById('s50PvGreet').textContent = v.greeting;
-  document.getElementById('s50PvMsg').textContent = v.msg;
-  document.getElementById('s50PvSign').textContent = '—— ' + v.sender + ' 敬邀';
-  const t = document.getElementById('s50Text');
-  document.getElementById('s50Count').textContent = t.value.length + ' / ' + SHARE50_MAXLEN;
-  s50Set('invite50_msg', t.value);
-  s50Set('invite50_from', document.getElementById('s50From').value);
-}
-
-function invite50Reset() {
-  document.getElementById('s50Text').value = SHARE50_DEFAULT_MSG;
-  invite50Preview();
-}
-
-function showInvite50() {
-  if (document.getElementById('invite50Overlay')) return;
-  const C = { bg: '#fbf6ec', ink: '#3d2817', green: '#3b4a2f', gold: '#a8864a', line: '#eadcc4' };
-  const field = 'display:block;width:100%;box-sizing:border-box;border:1px solid ' + C.line + ';border-radius:10px;padding:10px 12px;font-size:16px;color:' + C.ink + ';background:#fff;font-family:inherit';
-  const label = 'display:block;font-size:14px;font-weight:700;color:' + C.green + ';margin:14px 0 6px';
-  const d = document.createElement('div');
-  d.id = 'invite50Overlay';
-  d.style.cssText = 'position:fixed;inset:0;z-index:2147483000;background:' + C.bg + ';overflow:auto;-webkit-overflow-scrolling:touch;color:' + C.ink;
-  d.innerHTML =
-    '<div style="max-width:480px;margin:0 auto;padding:18px 16px 150px">' +
-      '<div style="text-align:center;font-size:12px;letter-spacing:3px;color:' + C.gold + '">食藝餐桌・五十而豐</div>' +
-      '<div style="text-align:center;font-size:21px;font-weight:700;color:' + C.green + ';margin:4px 0 12px">💌 邀請好朋友</div>' +
-      '<div style="font-size:14px;line-height:1.7;background:#fff;border:1px solid ' + C.line + ';border-radius:12px;padding:10px 14px">' +
-        '① 想說的話可以照自己的口吻改<br>② 按下方綠色按鈕 → 選朋友（可一次選多位）→ 傳送</div>' +
-
-
-      '<label style="' + label + '" for="s50Text">想對他說的話</label>' +
-      '<textarea id="s50Text" rows="8" maxlength="' + SHARE50_MAXLEN + '" style="' + field + ';line-height:1.7;resize:vertical"></textarea>' +
-      '<div style="display:flex;justify-content:space-between;font-size:12px;color:#8a7a62;margin-top:4px">' +
-        '<span id="s50Count"></span><a href="javascript:void(0)" onclick="invite50Reset()" style="color:' + C.gold + '">恢復預設文字</a></div>' +
-
-      '<label style="' + label + '" for="s50From">署名</label>' +
-      '<input id="s50From" maxlength="20" placeholder="你的名字" style="' + field + '">' +
-
-      '<div style="' + label + '">朋友會收到（預覽）</div>' +
-      '<div style="background:' + C.bg + ';border:1px solid ' + C.line + ';border-radius:16px;padding:18px;box-shadow:0 4px 16px rgba(0,0,0,.08)">' +
-        '<div style="font-size:11px;font-weight:700;color:' + C.gold + '">食藝餐桌・五十而豐</div>' +
-        '<div style="font-size:19px;font-weight:700;color:' + C.green + ';margin-top:2px">一封給你的邀請</div>' +
-        '<div style="height:1px;background:' + C.line + ';margin:12px 0"></div>' +
-        '<div id="s50PvGreet" style="font-weight:700;font-size:15px"></div>' +
-        '<div id="s50PvMsg" style="font-size:14px;line-height:1.8;white-space:pre-wrap;margin-top:6px"></div>' +
-        '<div id="s50PvSign" style="text-align:right;font-size:14px;color:#8a6d3b;margin-top:12px"></div>' +
-        '<div style="background:#fff;border:1px solid ' + C.line + ';border-radius:10px;padding:10px 12px;margin-top:12px;font-size:12px;line-height:1.8">' +
-          '12/7（一）18:00｜人生回顧暨感恩餐會<br>12/19（六）12:00｜50歲生日歡慶派對<br>' +
-          '<span style="color:#8a6d3b">WAGA 最美餐具｜台北市信義區松德路65號12樓</span></div>' +
-        '<div style="background:' + C.green + ';color:#fff;text-align:center;border-radius:8px;padding:9px;margin-top:12px;font-size:14px;font-weight:700">💌 我想參加，打開邀請</div>' +
-      '</div>' +
-      '<img src="' + SHARE50_IMG + '&t=' + Date.now() + '" style="width:100%;display:block;border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,.12);margin-top:12px">' +
-      '<div style="font-size:12px;color:#8a7a62;text-align:center;margin-top:6px">邀請函之後會接著送出這張海報，點圖會開啟 LINE 官方帳號</div>' +
-    '</div>' +
-    '<div style="position:fixed;left:0;right:0;bottom:0;background:rgba(251,246,236,.97);padding:12px 16px calc(12px + env(safe-area-inset-bottom));border-top:1px solid ' + C.line + '">' +
-      '<button type="button" id="invite50Btn" onclick="invite50Send()" style="display:block;width:100%;max-width:448px;margin:0 auto;border:none;border-radius:30px;padding:15px;font-size:18px;font-weight:700;color:#fff;background:#06c755">傳送邀請給 LINE 朋友</button>' +
-      '<div id="invite50Msg" style="text-align:center;font-size:14px;margin-top:8px;min-height:20px"></div>' +
-    '</div>';
-  document.body.appendChild(d);
-
-  document.getElementById('s50Text').value = s50Get('invite50_msg', SHARE50_DEFAULT_MSG);
-  document.getElementById('s50From').value = s50Get('invite50_from', '');
-  ['s50Text', 's50From'].forEach(id => document.getElementById(id).addEventListener('input', invite50Preview));
-  invite50Preview();
-
-  // 登入後自動帶入 LINE 名稱當署名（使用者已自己改過就不覆蓋）
-  (async () => {
-    try {
-      await liff.ready;
-      if (!liff.isLoggedIn()) return;
-      const p = await liff.getProfile();
-      const f = document.getElementById('s50From');
-      if (f && !f.value.trim() && p && p.displayName) { f.value = p.displayName; invite50Preview(); }
-    } catch (e) {}
-  })();
-}
-
-function invite50Messages(v) {
-  const letter = {
-    type: 'flex',
-    altText: v.sender + ' 邀請你：食藝餐桌・五十而豐',
-    contents: {
-      type: 'bubble', size: 'mega',
-      styles: { body: { backgroundColor: '#fbf6ec' }, footer: { backgroundColor: '#fbf6ec' } },
-      body: { type: 'box', layout: 'vertical', paddingAll: '20px', contents: [
-        { type: 'text', text: '食藝餐桌・五十而豐', size: 'xs', weight: 'bold', color: '#a8864a' },
-        { type: 'text', text: '一封給你的邀請', size: 'xl', weight: 'bold', color: '#3b4a2f', margin: 'xs' },
-        { type: 'separator', color: '#eadcc4', margin: 'lg' },
-        { type: 'text', text: v.greeting, size: 'md', weight: 'bold', color: '#3d2817', margin: 'lg', wrap: true },
-        { type: 'text', text: v.msg, size: 'sm', color: '#3d2817', wrap: true, lineSpacing: '6px', margin: 'md' },
-        { type: 'text', text: '—— ' + v.sender + ' 敬邀', size: 'sm', color: '#8a6d3b', align: 'end', margin: 'lg', wrap: true },
-        { type: 'box', layout: 'vertical', margin: 'lg', paddingAll: '12px', spacing: 'xs', cornerRadius: '10px',
-          backgroundColor: '#ffffff', borderColor: '#eadcc4', borderWidth: '1px', contents: [
-            { type: 'text', text: '12/7（一）18:00｜人生回顧暨感恩餐會', size: 'xs', color: '#3d2817', wrap: true },
-            { type: 'text', text: '12/19（六）12:00｜50歲生日歡慶派對', size: 'xs', color: '#3d2817', wrap: true },
-            { type: 'text', text: 'WAGA 最美餐具｜台北市信義區松德路65號12樓', size: 'xs', color: '#8a6d3b', wrap: true }
-        ] }
-      ] },
-      footer: { type: 'box', layout: 'vertical', paddingAll: '12px', contents: [
-        { type: 'button', style: 'primary', color: '#3b4a2f', height: 'sm',
-          action: { type: 'uri', label: '💌 我想參加，打開邀請', uri: SHARE50_OA } }
-      ] }
-    }
-  };
-  const poster = {
-    type: 'flex', altText: '喵老師五十人生大計畫｜點圖看完整邀請',
-    contents: { type: 'bubble', size: 'mega',
-      hero: { type: 'image', url: SHARE50_IMG, size: 'full', aspectRatio: SHARE50_RATIO, aspectMode: 'cover',
-              action: { type: 'uri', label: '解鎖喵老師50大計畫', uri: SHARE50_OA } },
-      footer: { type: 'box', layout: 'vertical', paddingAll: '12px', contents: [
-        { type: 'button', style: 'primary', color: '#3b4a2f', height: 'md',
-          action: { type: 'uri', label: '💌 我為你留了一個座位，點我打開邀請', uri: SHARE50_OA } }
-      ] } }
-  };
-  return [letter, poster];
-}
-
-async function invite50Send() {
-  const btn = document.getElementById('invite50Btn'), msg = document.getElementById('invite50Msg');
-  const say = (s, c) => { msg.style.color = c || '#3d2817'; msg.textContent = s; };
-  btn.disabled = true;
-  try {
-    await liff.ready;
-    if (!liff.isLoggedIn()) { liff.login({ redirectUri: location.href }); return; }
-    if (!liff.isApiAvailable('shareTargetPicker')) { say('請用手機在 LINE 裡打開這個連結再分享。', '#c0392b'); return; }
-    const v = invite50Values();
-    const res = await liff.shareTargetPicker(invite50Messages(v));
-    if (res) {
-      say('✅ 已傳送！可以再選其他朋友，再傳一次。', '#2e7d32');
-    } else {
-      say('已取消，沒有傳送。');
-    }
-  } catch (e) { say('傳送失敗：' + (e.message || e), '#c0392b'); }
-  btn.disabled = false;
-}
-
-if (INVITE50_MODE) {
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', showInvite50); else showInvite50();
-}
-
-// 【2026/11/28】登入跳轉後補開分享頁：先記住要開哪一頁，登入回來網址若遺失 ?page= 也能打開
-(function () {
-  try {
-    if (INVITE50_MODE) sessionStorage.setItem('idream_share_page', 'invite50');
-    else if (SHARE50_MODE) sessionStorage.setItem('idream_share_page', 'share50');
-  } catch (e) {}
-})();
-function shareAfterInit() {
-  let p = '';
-  try {
-    const h = decodeURIComponent(location.href);
-    p = /invite50/.test(h) ? 'invite50' : (/share50/.test(h) ? 'share50' : (sessionStorage.getItem('idream_share_page') || ''));
-    sessionStorage.removeItem('idream_share_page');
-  } catch (e) {}
-  if (p === 'invite50') showInvite50(); else if (p === 'share50') showShare50();
 }
 
 // 【2026/11】專用連結 ?open=referral：進購物車後直接打開推薦人專區（一樣經過 LINE 登入，會帶出 LINE 資料）
