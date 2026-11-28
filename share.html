@@ -49,7 +49,7 @@ async function share50Send() {
                 action: { type: 'uri', label: '解鎖喵老師50大計畫', uri: SHARE50_OA } },
         footer: { type: 'box', layout: 'vertical', paddingAll: '12px', contents: [
           { type: 'button', style: 'primary', color: '#3b4a2f', height: 'md',
-            action: { type: 'uri', label: '敬請點選查看〈喵老師的人生50計畫〉', uri: SHARE50_OA } }
+            action: { type: 'uri', label: '請點選查看 <喵老師的人生50計畫>', uri: SHARE50_OA } }
         ] } }
     }]);
     say(res ? '✅ 已傳送！可以再分享給其他朋友。' : '已取消，沒有傳送。', res ? '#2e7d32' : '');
